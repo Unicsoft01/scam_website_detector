@@ -7,6 +7,11 @@ from app.core.url_security import (
     validate_url,
 )
 
+# Extract URL-level heuristic features
+from app.features.url_features import (
+    extract_url_features,
+)
+
 
 router = APIRouter()
 
@@ -48,4 +53,35 @@ def validate_submitted_url(
             )
         ),
         "reason": reason,
+    }
+
+@router.post(
+    "/url-features"
+)
+def get_url_features(
+    request: URLScanRequest
+):
+    validation = validate_url(
+        request.url
+    )
+
+    if not validation.is_valid:
+        return {
+            "success": False,
+            "reason": validation.reason,
+            "features": None,
+        }
+
+    features = (
+        extract_url_features(
+            validation.normalized_url
+        )
+    )
+
+    return {
+        "success": True,
+        "normalized_url": (
+            validation.normalized_url
+        ),
+        "features": features,
     }
