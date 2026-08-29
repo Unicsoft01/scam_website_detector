@@ -3,6 +3,7 @@ from dataclasses import (
     dataclass,
     field,
 )
+import re
 from typing import Optional
 from urllib.parse import urlsplit
 
@@ -10,7 +11,6 @@ from playwright.sync_api import (
     Dialog,
     Download,
     Page,
-    Playwright,
     Request,
     Route,
     sync_playwright,
@@ -25,6 +25,8 @@ from app.core.url_security import (
 DEFAULT_NAVIGATION_TIMEOUT_MS = 10_000
 DEFAULT_ACTION_TIMEOUT_MS = 5_000
 DEFAULT_OBSERVATION_TIME_MS = 2_000
+
+MAX_MUTATION_COUNT = 10_000
 
 
 ALLOWED_REQUEST_METHODS = {
@@ -41,12 +43,141 @@ INTERNAL_BROWSER_SCHEMES = {
 }
 
 
+# The script is an immediately invoked function expression (IIFE).
+# This means it works correctly with BOTH:
+#   context.add_init_script(...)
+# and:
+#   page.evaluate(...)
+#
+# It is also idempotent: running it a second time will not create
+# a second MutationObserver or reset already collected metrics.
+BEHAVIOURAL_INIT_SCRIPT = f"""
+(() => {{
+    if (window.__behaviouralMetrics) {{
+        return;
+    }}
+
+    window.__behaviouralMetrics = {{
+        domMutationCount: 0,
+        formActionChangeCount: 0,
+        dynamicFormCount: 0,
+        titleChangeCount: 0
+    }};
+
+    let previousTitle = document.title || "";
+
+    const incrementMutation = () => {{
+        if (
+            window.__behaviouralMetrics.domMutationCount
+            < {MAX_MUTATION_COUNT}
+        ) {{
+            window.__behaviouralMetrics.domMutationCount++;
+        }}
+    }};
+
+    const observer = new MutationObserver(
+        (mutations) => {{
+            for (const mutation of mutations) {{
+                incrementMutation();
+
+                if (
+                    mutation.type === "attributes"
+                    &&
+                    mutation.target
+                    &&
+                    mutation.target.tagName === "FORM"
+                    &&
+                    mutation.attributeName === "action"
+                ) {{
+                    window.__behaviouralMetrics
+                        .formActionChangeCount++;
+                }}
+
+                if (mutation.type === "childList") {{
+                    for (const node of mutation.addedNodes) {{
+                        if (
+                            node.nodeType !==
+                            Node.ELEMENT_NODE
+                        ) {{
+                            continue;
+                        }}
+
+                        if (node.tagName === "FORM") {{
+                            window.__behaviouralMetrics
+                                .dynamicFormCount++;
+                        }}
+
+                        if (node.querySelectorAll) {{
+                            const nestedForms =
+                                node.querySelectorAll("form");
+
+                            window.__behaviouralMetrics
+                                .dynamicFormCount
+                                += nestedForms.length;
+                        }}
+                    }}
+                }}
+            }}
+
+            const currentTitle =
+                document.title || "";
+
+            if (currentTitle !== previousTitle) {{
+                window.__behaviouralMetrics
+                    .titleChangeCount++;
+
+                previousTitle =
+                    currentTitle;
+            }}
+        }}
+    );
+
+    const startObserver = () => {{
+        if (!document.documentElement) {{
+            return;
+        }}
+
+        observer.observe(
+            document.documentElement,
+            {{
+                subtree: true,
+                childList: true,
+                attributes: true,
+                characterData: true,
+                attributeFilter: [
+                    "action",
+                    "style",
+                    "hidden",
+                    "class"
+                ]
+            }}
+        );
+    }};
+
+    if (document.documentElement) {{
+        startObserver();
+    }} else {{
+        document.addEventListener(
+            "DOMContentLoaded",
+            startObserver,
+            {{
+                once: true
+            }}
+        );
+    }}
+}})();
+"""
+
+
 @dataclass
 class BrowserObservation:
     submitted_url: Optional[str]
 
     success: bool = False
+
+    initial_url: Optional[str] = None
     final_url: Optional[str] = None
+
     main_status_code: Optional[int] = None
 
     request_urls: list[str] = field(
@@ -54,6 +185,14 @@ class BrowserObservation:
     )
 
     navigation_urls: list[str] = field(
+        default_factory=list
+    )
+
+    automatic_navigation_urls: list[str] = field(
+        default_factory=list
+    )
+
+    redirect_chain: list[str] = field(
         default_factory=list
     )
 
@@ -70,9 +209,17 @@ class BrowserObservation:
     download_count: int = 0
 
     page_error_count: int = 0
+
     page_errors: list[str] = field(
         default_factory=list
     )
+
+    dom_mutation_count: int = 0
+    form_action_change_count: int = 0
+    dynamic_form_count: int = 0
+    title_change_count: int = 0
+
+    countdown_detected: bool = False
 
     error_type: Optional[str] = None
     error_message: Optional[str] = None
@@ -93,8 +240,7 @@ def _block_request(
         {
             "url": request.url,
             "method": request.method,
-            "resource_type":
-                request.resource_type,
+            "resource_type": request.resource_type,
             "reason": reason,
         }
     )
@@ -109,7 +255,6 @@ def _handle_route(
     """
     Security gate for every intercepted browser request.
 
-    Important:
     This operates before the browser is permitted to continue
     the request.
     """
@@ -140,8 +285,7 @@ def _handle_route(
         .lower()
     )
 
-    # Browser-internal/non-network resources may be used
-    # by a page without contacting another network host.
+    # Non-network browser resources are allowed.
     if scheme in INTERNAL_BROWSER_SCHEMES:
         route.continue_()
         return
@@ -167,11 +311,8 @@ def _handle_route(
         .upper()
     )
 
-    # During observation we avoid allowing common
-    # state-changing HTTP requests.
-    if method not in (
-        ALLOWED_REQUEST_METHODS
-    ):
+    # Avoid common state-changing requests during observation.
+    if method not in ALLOWED_REQUEST_METHODS:
         _block_request(
             route,
             state,
@@ -255,8 +396,7 @@ def _handle_download(
     """
     Record attempted downloads.
 
-    Browser context is configured with accept_downloads=False,
-    so files should not be intentionally persisted.
+    accept_downloads=False prevents intentional persistence.
     """
 
     state.download_count += 1
@@ -386,13 +526,9 @@ def _create_context(
 
     context = browser.new_context(
         accept_downloads=False,
-
         java_script_enabled=True,
-
         ignore_https_errors=False,
-
         service_workers="block",
-
         viewport={
             "width": 1280,
             "height": 720,
@@ -410,6 +546,209 @@ def _create_context(
     )
 
     return context
+
+
+def _extract_redirect_chain(
+    response,
+) -> list[str]:
+    """
+    Reconstruct the HTTP redirect chain for the main document
+    request returned by page.goto().
+
+    Example:
+        A -> B -> C
+    returns:
+        [A, B, C]
+    """
+
+    if response is None:
+        return []
+
+    try:
+        request = response.request
+
+        chain = [
+            request.url
+        ]
+
+        previous = (
+            request.redirected_from
+        )
+
+        while previous is not None:
+            chain.append(
+                previous.url
+            )
+
+            previous = (
+                previous.redirected_from
+            )
+
+        chain.reverse()
+
+        return chain
+
+    except Exception:
+        return []
+
+
+def _extract_visible_integer_candidates(
+    page: Page,
+) -> set[int]:
+    """
+    Collect reasonable visible integer values from page text.
+
+    Used only for conservative countdown detection.
+    """
+
+    try:
+        text = page.locator(
+            "body"
+        ).inner_text(
+            timeout=1000
+        )
+
+    except Exception:
+        return set()
+
+    values = set()
+
+    # Correct regex: \d means a digit.
+    # The previous double-escaped form would not detect digits correctly.
+    for match in re.findall(
+        r"(?<!\d)\d{1,4}(?!\d)",
+        text,
+    ):
+        try:
+            value = int(
+                match
+            )
+
+        except ValueError:
+            continue
+
+        if 0 <= value <= 3600:
+            values.add(
+                value
+            )
+
+    return values
+
+
+def _detect_countdown(
+    page: Page,
+) -> bool:
+    """
+    Conservatively detect repeated downward-moving visible
+    numeric values.
+
+    A countdown is reported only when at least two consecutive
+    transitions show a value decreasing by exactly one during
+    four bounded observations.
+    """
+
+    snapshots = []
+
+    for _ in range(4):
+        snapshots.append(
+            _extract_visible_integer_candidates(
+                page
+            )
+        )
+
+        page.wait_for_timeout(
+            400
+        )
+
+    decrease_evidence = 0
+
+    for index in range(
+        len(snapshots) - 1
+    ):
+        current = (
+            snapshots[index]
+        )
+
+        following = (
+            snapshots[index + 1]
+        )
+
+        found_decrease = False
+
+        for value in current:
+            if (
+                value - 1
+                in following
+            ):
+                found_decrease = True
+                break
+
+        if found_decrease:
+            decrease_evidence += 1
+
+    return (
+        decrease_evidence >= 2
+    )
+
+
+def _read_runtime_metrics(
+    page: Page,
+    state: BrowserObservation,
+) -> None:
+    """
+    Copy MutationObserver counters from the page into the
+    BrowserObservation object.
+    """
+
+    try:
+        runtime_metrics = page.evaluate(
+            """
+            () =>
+                window.__behaviouralMetrics
+                || null
+            """
+        )
+
+    except Exception:
+        runtime_metrics = None
+
+    if not runtime_metrics:
+        return
+
+    state.dom_mutation_count = min(
+        int(
+            runtime_metrics.get(
+                "domMutationCount",
+                0,
+            )
+            or 0
+        ),
+        MAX_MUTATION_COUNT,
+    )
+
+    state.form_action_change_count = int(
+        runtime_metrics.get(
+            "formActionChangeCount",
+            0,
+        )
+        or 0
+    )
+
+    state.dynamic_form_count = int(
+        runtime_metrics.get(
+            "dynamicFormCount",
+            0,
+        )
+        or 0
+    )
+
+    state.title_change_count = int(
+        runtime_metrics.get(
+            "titleChangeCount",
+            0,
+        )
+        or 0
+    )
 
 
 def observe_public_url(
@@ -476,7 +815,6 @@ def observe_public_url(
     # ----------------------------------
 
     with sync_playwright() as playwright:
-
         browser = None
         context = None
 
@@ -493,8 +831,13 @@ def observe_public_url(
                 )
             )
 
-            # Route every browser request through
-            # our request safety function.
+            # Install the behavioural observer before document
+            # scripts execute on navigated pages.
+            context.add_init_script(
+                BEHAVIOURAL_INIT_SCRIPT
+            )
+
+            # Route every browser request through the safety gate.
             context.route(
                 "**/*",
                 lambda route:
@@ -515,9 +858,26 @@ def observe_public_url(
 
             response = page.goto(
                 normalized_url,
-                wait_until=(
-                    "domcontentloaded"
-                ),
+                wait_until="domcontentloaded",
+            )
+
+            # Initial state after page.goto() has completed.
+            state.initial_url = (
+                page.url
+            )
+
+            state.redirect_chain = (
+                _extract_redirect_chain(
+                    response
+                )
+            )
+
+            # Everything already recorded up to this point belongs
+            # to initial loading. Later main-frame navigation events
+            # are treated as automatic runtime navigation because
+            # the scanner performs no user interaction.
+            navigation_baseline = len(
+                state.navigation_urls
             )
 
             if response is not None:
@@ -525,11 +885,35 @@ def observe_public_url(
                     response.status
                 )
 
-            # Give runtime JavaScript a small,
-            # bounded observation window.
+            # Bounded general runtime observation period.
             page.wait_for_timeout(
                 observation_time_ms
             )
+
+            state.automatic_navigation_urls = (
+                state.navigation_urls[
+                    navigation_baseline:
+                ]
+            )
+
+            # Read DOM behaviour accumulated during page execution.
+            _read_runtime_metrics(
+                page,
+                state,
+            )
+
+            # Conservative countdown sampling. This deliberately
+            # adds about 1.6 seconds to runtime.
+            try:
+                state.countdown_detected = (
+                    _detect_countdown(
+                        page
+                    )
+                )
+
+            except Exception:
+                state.countdown_detected = False
+
 
             state.final_url = (
                 page.url
@@ -585,7 +969,6 @@ def observe_synthetic_html(
     )
 
     with sync_playwright() as playwright:
-
         browser = None
         context = None
 
@@ -600,6 +983,10 @@ def observe_synthetic_html(
                 _create_context(
                     browser
                 )
+            )
+
+            context.add_init_script(
+                BEHAVIOURAL_INIT_SCRIPT
             )
 
             context.route(
@@ -624,6 +1011,13 @@ def observe_synthetic_html(
                 html
             )
 
+            # set_content() is not an ordinary browser navigation,
+            # so execute the observer directly as well. The script
+            # is idempotent and will not install twice.
+            page.evaluate(
+                BEHAVIOURAL_INIT_SCRIPT
+            )
+
             if javascript:
                 page.evaluate(
                     javascript
@@ -632,6 +1026,21 @@ def observe_synthetic_html(
             page.wait_for_timeout(
                 observation_time_ms
             )
+
+            _read_runtime_metrics(
+                page,
+                state,
+            )
+
+            try:
+                state.countdown_detected = (
+                    _detect_countdown(
+                        page
+                    )
+                )
+
+            except Exception:
+                state.countdown_detected = False
 
             state.final_url = (
                 page.url
