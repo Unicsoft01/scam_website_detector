@@ -1,0 +1,29 @@
+{
+  "model": "RF-H",
+  "model_version": "1.0.0",
+  "feature_count": 10,
+  "selected_features": [
+    "h_path_length",
+    "h_script_count",
+    "h_external_link_ratio",
+    "h_hidden_element_count",
+    "h_suspicious_keyword_count",
+    "h_digit_count",
+    "h_has_aaaa_record",
+    "h_certificate_expired",
+    "h_at_symbol_count",
+    "h_hyphen_count"
+  ],
+  "expected_input_order": [
+    "h_path_length",
+    "h_script_count",
+    "h_external_link_ratio",
+    "h_hidden_element_count",
+    "h_suspicious_keyword_count",
+    "h_digit_count",
+    "h_has_aaaa_record",
+    "h_certificate_expired",
+    "h_at_symbol_count",
+    "h_hyphen_count"
+  ]
+}

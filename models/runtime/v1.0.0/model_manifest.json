@@ -1,0 +1,161 @@
+{
+  "model_version": "1.0.0",
+  "system": "Real-Time Scam Website Detection System",
+  "package_status": "approved_runtime_models",
+  "packaged_at_utc": "2026-08-30T14:38:25.600543+00:00",
+  "target": {
+    "name": "binary_label",
+    "legitimate": 0,
+    "scam": 1
+  },
+  "heuristic_model": {
+    "name": "RF-H",
+    "classifier_family": "RandomForestClassifier",
+    "file": "rf_heuristic.joblib",
+    "selected_feature_count": 10,
+    "expected_input_feature_order": [
+      "h_path_length",
+      "h_script_count",
+      "h_external_link_ratio",
+      "h_hidden_element_count",
+      "h_suspicious_keyword_count",
+      "h_digit_count",
+      "h_has_aaaa_record",
+      "h_certificate_expired",
+      "h_at_symbol_count",
+      "h_hyphen_count"
+    ],
+    "trained_at_utc": null,
+    "training_timestamp_source": "not_recorded",
+    "artefact_modified_at_utc": "2026-08-30T13:45:11.248145+00:00",
+    "random_state": 42,
+    "best_parameters": {
+      "class_weight": "balanced_subsample",
+      "max_depth": null,
+      "max_features": "sqrt",
+      "min_samples_leaf": 1,
+      "min_samples_split": 5,
+      "n_estimators": 200
+    }
+  },
+  "behavioural_model": {
+    "name": "RF-B",
+    "classifier_family": "RandomForestClassifier",
+    "file": "rf_behavioural.joblib",
+    "selected_feature_count": 15,
+    "expected_input_feature_order": [
+      "b_total_request_count",
+      "b_external_request_count",
+      "b_download_attempt_count",
+      "b_title_change_count",
+      "b_has_automatic_navigation",
+      "b_blocked_request_count",
+      "b_dom_mutation_count",
+      "b_failed_request_count",
+      "b_countdown_detected",
+      "b_automatic_navigation_count",
+      "b_page_error_count",
+      "b_state_changing_request_attempt_count",
+      "b_has_title_change",
+      "b_cross_domain_redirect_count",
+      "b_dialog_count"
+    ],
+    "trained_at_utc": null,
+    "training_timestamp_source": "not_recorded",
+    "artefact_modified_at_utc": "2026-08-30T13:58:10.475691+00:00",
+    "random_state": 42,
+    "best_parameters": {
+      "class_weight": "balanced",
+      "max_depth": null,
+      "max_features": "sqrt",
+      "min_samples_leaf": 1,
+      "min_samples_split": 2,
+      "n_estimators": 200
+    }
+  },
+  "hybrid": {
+    "method": "weighted_probability_average",
+    "formula": "P_Hybrid = alpha * P_H + (1-alpha) * P_B",
+    "alpha": 0.1,
+    "heuristic_weight": 0.1,
+    "behavioural_weight": 0.9,
+    "classification_threshold": 0.5,
+    "missing_behaviour_policy": "Do not substitute zero. Principal hybrid evaluation requires both evidence channels; production may return explicitly labelled heuristic fallback."
+  },
+  "classification_thresholds": {
+    "heuristic": 0.55,
+    "behavioural": 0.5,
+    "hybrid": 0.5
+  },
+  "evaluation": {
+    "test_sample_count": 5,
+    "unique_test_domains": 5,
+    "legitimate_test_count": 2,
+    "scam_test_count": 3,
+    "final_metrics": [
+      {
+        "configuration": "Heuristic-only",
+        "threshold": 0.55,
+        "sample_count": 5,
+        "accuracy": 0.6,
+        "precision": 0.6,
+        "recall": 1.0,
+        "f1": 0.75,
+        "roc_auc": 0.6666666666666666,
+        "false_positive_rate": 1.0,
+        "false_negative_rate": 0.0,
+        "true_negative": 0,
+        "false_positive": 2,
+        "false_negative": 0,
+        "true_positive": 3
+      },
+      {
+        "configuration": "Behavioural-only",
+        "threshold": 0.5,
+        "sample_count": 5,
+        "accuracy": 0.4,
+        "precision": 0.5,
+        "recall": 0.6666666666666666,
+        "f1": 0.5714285714285714,
+        "roc_auc": 0.3333333333333333,
+        "false_positive_rate": 1.0,
+        "false_negative_rate": 0.3333333333333333,
+        "true_negative": 0,
+        "false_positive": 2,
+        "false_negative": 1,
+        "true_positive": 2
+      },
+      {
+        "configuration": "Hybrid",
+        "threshold": 0.5,
+        "sample_count": 5,
+        "accuracy": 0.6,
+        "precision": 0.6,
+        "recall": 1.0,
+        "f1": 0.75,
+        "roc_auc": 0.3333333333333333,
+        "false_positive_rate": 1.0,
+        "false_negative_rate": 0.0,
+        "true_negative": 0,
+        "false_positive": 2,
+        "false_negative": 0,
+        "true_positive": 3
+      }
+    ]
+  },
+  "runtime_policy": {
+    "load_models_once": true,
+    "retrain_per_scan": false,
+    "preserve_feature_order": true,
+    "missing_behaviour_as_zero": false,
+    "primary_decision": "hybrid_when_complete",
+    "fallback": "explicitly labelled heuristic fallback"
+  },
+  "sha256": {
+    "rf_heuristic.joblib": "0435d3049c6a186dffaca560803f55b52dc4c53747604cbb1f9be7e282e054c2",
+    "rf_behavioural.joblib": "827c333711ab82dc5c381f56a3db2a0f11bfe1c66cd89fb3f19e2f8c6cc5e638",
+    "hybrid_fusion_config.json": "b12e42f00ebdcb5e2fd7f62f66b3978e14ee3b4e18a3eecd3f3b165bf5939b28",
+    "heuristic_features.json": "4d32730ee7aef2e649e4957f4cd4e03e2f2cfa2f37ef23f26bdaf00507337b6a",
+    "behavioural_features.json": "b0b18de465706db1fd31e4639bb4596a1d1e4eace71f2ceea41791c38f1bdf6b"
+  }
+}
