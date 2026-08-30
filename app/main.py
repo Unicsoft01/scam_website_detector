@@ -1,47 +1,123 @@
-from fastapi import FastAPI
-from sqlalchemy import text
+from fastapi import (
+    FastAPI,
+    HTTPException,
+    Request,
+)
 
-from app.core.config import settings
-from app.database.database import engine
+from fastapi.exceptions import (
+    RequestValidationError,
+)
 
-from app.api.routes import router
+from fastapi.responses import (
+    JSONResponse,
+)
+
+from app.api.routes import (
+    router,
+)
 
 
 app = FastAPI(
-    title=settings.app_name,
-    description="Real-time scam website detection using heuristic and behavioural analysis.",
+    title=(
+        "Real-Time Scam Website "
+        "Detection System"
+    ),
+
+    description=(
+        "A web-based scam website "
+        "detection system using "
+        "heuristic and behavioural "
+        "analysis."
+    ),
+
     version="1.0.0",
+
+    docs_url="/docs",
+
+    redoc_url="/redoc",
+
+    openapi_url=(
+        "/openapi.json"
+    ),
 )
 
-# Include the API router with a prefix of "/api"
+
 app.include_router(
-    router,
-    prefix="/api"
+    router
 )
 
 
-@app.get("/")
-def home():
-    return {
-        "message": f"{settings.app_name} is running",
-        "environment": settings.app_env
-    }
+@app.exception_handler(
+    RequestValidationError
+)
+async def validation_exception_handler(
+    request: Request,
+    exc: RequestValidationError,
+):
+
+    return JSONResponse(
+        status_code=422,
+
+        content={
+            "error": (
+                "request_validation_error"
+            ),
+
+            "message": (
+                "The submitted request "
+                "could not be validated."
+            ),
+
+            "details": exc.errors(),
+        },
+    )
 
 
-@app.get("/health")
-def health_check():
-    database_status = "unavailable"
+@app.exception_handler(
+    HTTPException
+)
+async def http_exception_handler(
+    request: Request,
+    exc: HTTPException,
+):
 
-    try:
-        with engine.connect() as connection:
-            connection.execute(text("SELECT 1"))
-            database_status = "connected"
-    except Exception:
-        database_status = "unavailable"
+    return JSONResponse(
+        status_code=(
+            exc.status_code
+        ),
 
-    return {
-        "status": "ok",
-        "service": settings.app_name,
-        "environment": settings.app_env,
-        "database": database_status
-    }
+        content={
+            "error": (
+                "http_error"
+            ),
+
+            "message": exc.detail,
+        },
+    )
+
+
+@app.exception_handler(
+    Exception
+)
+async def unhandled_exception_handler(
+    request: Request,
+    exc: Exception,
+):
+
+    # Do not return internal traceback
+    # details to the client.
+
+    return JSONResponse(
+        status_code=500,
+
+        content={
+            "error": (
+                "internal_server_error"
+            ),
+
+            "message": (
+                "An unexpected internal "
+                "error occurred."
+            ),
+        },
+    )
