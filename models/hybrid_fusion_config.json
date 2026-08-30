@@ -1,0 +1,16 @@
+{
+  "fusion_method": "weighted_probability_average",
+  "formula": "P_Hybrid = alpha * P_H + (1-alpha) * P_B",
+  "alpha": 0.1,
+  "heuristic_weight": 0.1,
+  "behavioural_weight": 0.9,
+  "classification_threshold": 0.5,
+  "positive_class": 1,
+  "positive_class_name": "scam",
+  "alpha_selected_on": "validation",
+  "threshold_selected_on": "validation",
+  "test_set_used_for_calibration": false,
+  "missing_behaviour_policy": "Do not substitute zero. Principal hybrid evaluation requires both evidence channels; production may return explicitly labelled heuristic fallback.",
+  "heuristic_validation_predictions_sha256": "b1a2a4000c9684883ebdc269f9a2493fee86b104d1a878ef6bc0b91aea425624",
+  "behavioural_validation_predictions_sha256": "b86a94e2809f40b95ceb7465d35bc4686c734cc17e67d159ac61439a1a062d09"
+}
