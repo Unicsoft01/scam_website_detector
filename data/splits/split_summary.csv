@@ -1,0 +1,4 @@
+split,rows,percentage,unique_domains,legitimate_count,scam_count
+training,20,68.97,20,8,12
+validation,4,13.79,4,2,2
+testing,5,17.24,5,2,3

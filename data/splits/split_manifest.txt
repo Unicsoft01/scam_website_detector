@@ -1,0 +1,13 @@
+PHASE 16 SPLIT MANIFEST
+========================================================================
+Principal split dataset: data\processed\cleaned\hybrid_cleaned.csv
+Hybrid input SHA256: 311046ab1e15f4166cfa9784b82e47f055de3cf2ff2c5b871a4d09fd5f381272
+Heuristic input SHA256: 4a4e97df5ac1e3d876fa6a941f0e6ff4c1d597da2cdcb1592ae5599fd3b7115c
+Behavioural input SHA256: f2bb8e0af9884057f61bb91676c3ac0d5185c3c5e85c4c687a3923f5cacd8d34
+Selected candidate seed: 82
+Metadata balance score: 2.25344828
+Target ratio: 70/15/15
+Grouping variable: registrable_domain
+Candidate split selection used only size/label/category/source metadata balance.
+No model performance was used to choose the split.
+Final test set must not be used for preprocessing fitting, feature selection, hyperparameter tuning, alpha selection or threshold selection.
