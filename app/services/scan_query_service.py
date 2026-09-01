@@ -11,6 +11,13 @@ from app.database.models import (
 )
 
 
+from app.database.models import (
+    AnalysisResult,
+    BehaviouralObservation,
+    HeuristicObservation,
+    Scan,
+)
+
 class ScanQueryService:
 
     def __init__(
@@ -113,3 +120,42 @@ class ScanQueryService:
             total,
             scans,
         )
+
+    def get_heuristic_observation(
+    self,
+    scan_id: int,
+      ) -> HeuristicObservation | None:
+
+      statement = (
+            select(HeuristicObservation)
+            .where(
+                  HeuristicObservation.scan_id
+                  == scan_id
+            )
+      )
+
+      return (
+            self.session
+            .execute(statement)
+            .scalar_one_or_none()
+      )
+
+
+      def get_behavioural_observation(
+      self,
+      scan_id: int,
+      ) -> BehaviouralObservation | None:
+
+            statement = (
+                  select(BehaviouralObservation)
+                  .where(
+                        BehaviouralObservation.scan_id
+                        == scan_id
+                  )
+            )
+
+            return (
+                  self.session
+                  .execute(statement)
+                  .scalar_one_or_none()
+            )

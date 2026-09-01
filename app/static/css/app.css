@@ -1,0 +1,36 @@
+body {
+    background: #f8f9fa;
+    min-height: 100vh;
+}
+
+.hero-section {
+    min-height: calc(100vh - 150px);
+    display: flex;
+    align-items: center;
+}
+
+.scan-card {
+    border-radius: 1rem;
+}
+
+.info-box {
+    background: #ffffff;
+    padding: 1.25rem;
+    border-radius: 0.75rem;
+    border: 1px solid #e9ecef;
+}
+
+.probability-panel {
+    background: #f8f9fa;
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+    text-align: center;
+}
+
+.table th {
+    width: 220px;
+}
+
+.navbar-brand {
+    letter-spacing: 0.2px;
+}

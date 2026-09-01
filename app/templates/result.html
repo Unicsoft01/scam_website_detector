@@ -1,0 +1,511 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div
+        class="d-flex flex-column flex-md-row
+               justify-content-between
+               align-items-md-center
+               gap-3 mb-4"
+    >
+
+        <div>
+            <h1 class="h2 mb-1">
+                Website Analysis Result
+            </h1>
+
+            <p class="text-muted mb-0">
+                Scan ID: {{ scan.scan_id }}
+            </p>
+        </div>
+
+        <a
+            href="/"
+            class="btn btn-outline-primary"
+        >
+            Analyse Another Website
+        </a>
+
+    </div>
+
+
+    <div
+        class="card shadow-sm border-0 mb-4"
+    >
+
+        <div class="card-body p-4">
+
+            <div
+                class="row align-items-center g-4"
+            >
+
+                <div class="col-lg-8">
+
+                    <div
+                        class="text-muted small mb-1"
+                    >
+                        Submitted URL
+                    </div>
+
+                    <div
+                        class="fw-semibold text-break mb-3"
+                    >
+                        {{ scan.submitted_url }}
+                    </div>
+
+
+                    {% if predicted_class %}
+
+                        {% if primary.predicted_label == 1 %}
+
+                            <span
+                                class="badge text-bg-danger
+                                       fs-5 px-3 py-2"
+                            >
+                                Scam Website
+                            </span>
+
+                        {% else %}
+
+                            <span
+                                class="badge text-bg-success
+                                       fs-5 px-3 py-2"
+                            >
+                                Legitimate Website
+                            </span>
+
+                        {% endif %}
+
+                    {% else %}
+
+                        <span
+                            class="badge text-bg-secondary
+                                   fs-6 px-3 py-2"
+                        >
+                            No Classification Available
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+
+                <div class="col-lg-4">
+
+                    {% if hybrid_probability %}
+
+                    <div
+                        class="probability-panel"
+                    >
+
+                        <div
+                            class="text-muted small"
+                        >
+                            Hybrid Scam Probability
+                        </div>
+
+                        <div
+                            class="display-6 fw-bold"
+                        >
+                            {{ hybrid_probability }}%
+                        </div>
+
+                    </div>
+
+                    {% elif heuristic_probability %}
+
+                    <div
+                        class="probability-panel"
+                    >
+
+                        <div
+                            class="text-muted small"
+                        >
+                            Heuristic Scam Probability
+                        </div>
+
+                        <div
+                            class="display-6 fw-bold"
+                        >
+                            {{ heuristic_probability }}%
+                        </div>
+
+                        <div
+                            class="small text-warning-emphasis"
+                        >
+                            Hybrid evidence unavailable
+                        </div>
+
+                    </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    {% if scan.scan_status != "completed" %}
+
+    <div
+        class="alert alert-warning"
+    >
+
+        <strong>
+            Scan status:
+            {{ scan.scan_status }}
+        </strong>
+
+        {% if scan.error_message %}
+        <div class="mt-1">
+            {{ scan.error_message }}
+        </div>
+        {% endif %}
+
+    </div>
+
+    {% endif %}
+
+
+    <div class="row g-4 mb-4">
+
+        <div class="col-md-4">
+
+            <div
+                class="card h-100 shadow-sm border-0"
+            >
+
+                <div class="card-body">
+
+                    <div class="text-muted small">
+                        Heuristic Probability
+                    </div>
+
+                    <div class="h3 mt-2 mb-0">
+
+                        {% if heuristic_probability %}
+                            {{ heuristic_probability }}%
+                        {% else %}
+                            —
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-4">
+
+            <div
+                class="card h-100 shadow-sm border-0"
+            >
+
+                <div class="card-body">
+
+                    <div class="text-muted small">
+                        Behavioural Probability
+                    </div>
+
+                    <div class="h3 mt-2 mb-0">
+
+                        {% if behavioural_probability %}
+                            {{ behavioural_probability }}%
+                        {% else %}
+                            —
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-4">
+
+            <div
+                class="card h-100 shadow-sm border-0"
+            >
+
+                <div class="card-body">
+
+                    <div class="text-muted small">
+                        Hybrid Probability
+                    </div>
+
+                    <div class="h3 mt-2 mb-0">
+
+                        {% if hybrid_probability %}
+                            {{ hybrid_probability }}%
+                        {% else %}
+                            —
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="row g-4 mb-4">
+
+        <div class="col-lg-6">
+
+            <div
+                class="card h-100 shadow-sm border-0"
+            >
+
+                <div class="card-body">
+
+                    <h2 class="h5">
+                        Heuristic Indicators
+                    </h2>
+
+                    <p
+                        class="text-muted small"
+                    >
+                        Selected non-zero observations
+                        recorded during static analysis.
+                    </p>
+
+                    {% if heuristic_indicators %}
+
+                        <ul
+                            class="list-group list-group-flush"
+                        >
+
+                        {% for item in heuristic_indicators %}
+
+                            <li
+                                class="list-group-item
+                                       d-flex
+                                       justify-content-between
+                                       px-0"
+                            >
+
+                                <span>
+                                    {{ item.name }}
+                                </span>
+
+                                <span
+                                    class="badge text-bg-light"
+                                >
+                                    {{ item.value }}
+                                </span>
+
+                            </li>
+
+                        {% endfor %}
+
+                        </ul>
+
+                    {% else %}
+
+                        <p class="text-muted mb-0">
+                            No displayable heuristic
+                            indicators were recorded.
+                        </p>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-lg-6">
+
+            <div
+                class="card h-100 shadow-sm border-0"
+            >
+
+                <div class="card-body">
+
+                    <h2 class="h5">
+                        Behavioural Indicators
+                    </h2>
+
+                    <p
+                        class="text-muted small"
+                    >
+                        Selected non-zero observations
+                        recorded during controlled runtime
+                        analysis.
+                    </p>
+
+                    {% if behavioural_indicators %}
+
+                        <ul
+                            class="list-group list-group-flush"
+                        >
+
+                        {% for item in behavioural_indicators %}
+
+                            <li
+                                class="list-group-item
+                                       d-flex
+                                       justify-content-between
+                                       px-0"
+                            >
+
+                                <span>
+                                    {{ item.name }}
+                                </span>
+
+                                <span
+                                    class="badge text-bg-light"
+                                >
+                                    {{ item.value }}
+                                </span>
+
+                            </li>
+
+                        {% endfor %}
+
+                        </ul>
+
+                    {% else %}
+
+                        <p class="text-muted mb-0">
+                            No displayable behavioural
+                            indicators were recorded.
+                        </p>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div
+        class="card shadow-sm border-0"
+    >
+
+        <div class="card-body">
+
+            <h2 class="h5 mb-3">
+                Scan Information
+            </h2>
+
+            <div
+                class="table-responsive"
+            >
+
+                <table
+                    class="table align-middle mb-0"
+                >
+
+                    <tbody>
+
+                    <tr>
+                        <th>
+                            Normalized URL
+                        </th>
+
+                        <td class="text-break">
+                            {{ scan.normalized_url }}
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>
+                            Registrable Domain
+                        </th>
+
+                        <td>
+                            {{ scan.registrable_domain or "—" }}
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>
+                            Behavioural Evidence
+                        </th>
+
+                        <td>
+
+                            {% if scan.behavioural_available %}
+                                Available
+                            {% elif scan.behavioural_available is sameas false %}
+                                Unavailable
+                            {% else %}
+                                Not determined
+                            {% endif %}
+
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>
+                            Analysis Duration
+                        </th>
+
+                        <td>
+
+                            {% if total_duration_ms is not none %}
+                                {{ "%.2f"|format(total_duration_ms) }} ms
+                            {% else %}
+                                —
+                            {% endif %}
+
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>
+                            Started
+                        </th>
+
+                        <td>
+                            {{ scan.initiated_at }}
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>
+                            Completed
+                        </th>
+
+                        <td>
+                            {{ scan.completed_at or "—" }}
+                        </td>
+                    </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

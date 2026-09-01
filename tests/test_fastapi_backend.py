@@ -21,13 +21,22 @@ def test_home():
         == 200
     )
 
-    data = response.json()
-
     assert (
-        data["status"]
-        == "running"
+        "text/html"
+        in response.headers[
+            "content-type"
+        ]
     )
 
+    assert (
+        "Scam Website Detector"
+        in response.text
+    )
+
+    assert (
+        "Analyse Website"
+        in response.text
+    )
 
 def test_api_information():
 

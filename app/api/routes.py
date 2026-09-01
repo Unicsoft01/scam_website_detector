@@ -36,21 +36,6 @@ from app.services.scan_query_service import (
 router = APIRouter()
 
 
-@router.get(
-    "/",
-    tags=["Application"],
-)
-def home():
-
-    return {
-        "application": (
-            "Real-Time Scam Website "
-            "Detection System"
-        ),
-        "status": "running",
-        "documentation": "/docs",
-        "api": "/api",
-    }
 
 
 @router.get(

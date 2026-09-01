@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div
+        class="d-flex justify-content-between
+               align-items-center mb-4"
+    >
+
+        <div>
+            <h1 class="h2 mb-1">
+                Scan History
+            </h1>
+
+            <p class="text-muted mb-0">
+                {{ total }} recorded scan(s)
+            </p>
+        </div>
+
+        <a
+            href="/"
+            class="btn btn-primary"
+        >
+            New Scan
+        </a>
+
+    </div>
+
+
+    <div
+        class="card shadow-sm border-0"
+    >
+
+        <div class="card-body p-0">
+
+            {% if scans %}
+
+            <div class="table-responsive">
+
+                <table
+                    class="table table-hover
+                           align-middle mb-0"
+                >
+
+                    <thead class="table-light">
+
+                    <tr>
+                        <th>Scan ID</th>
+                        <th>URL</th>
+                        <th>Status</th>
+                        <th>Behaviour</th>
+                        <th>Date/Time</th>
+                        <th></th>
+                    </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                    {% for scan in scans %}
+
+                    <tr>
+
+                        <td>
+                            #{{ scan.scan_id }}
+                        </td>
+
+                        <td
+                            class="text-break"
+                            style="max-width: 360px;"
+                        >
+                            {{ scan.submitted_url }}
+                        </td>
+
+                        <td>
+
+                            {% if scan.scan_status == "completed" %}
+
+                                <span
+                                    class="badge text-bg-success"
+                                >
+                                    Completed
+                                </span>
+
+                            {% elif scan.scan_status == "partial" %}
+
+                                <span
+                                    class="badge text-bg-warning"
+                                >
+                                    Partial
+                                </span>
+
+                            {% elif scan.scan_status == "failed" %}
+
+                                <span
+                                    class="badge text-bg-danger"
+                                >
+                                    Failed
+                                </span>
+
+                            {% else %}
+
+                                <span
+                                    class="badge text-bg-secondary"
+                                >
+                                    {{ scan.scan_status }}
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            {% if scan.behavioural_available %}
+                                Available
+                            {% else %}
+                                —
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+                            {{ scan.initiated_at }}
+                        </td>
+
+                        <td>
+
+                            <a
+                                class="btn btn-sm
+                                       btn-outline-primary"
+                                href="/results/{{ scan.scan_id }}"
+                            >
+                                View
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            {% else %}
+
+                <div
+                    class="text-center py-5"
+                >
+
+                    <h2 class="h5">
+                        No scans yet
+                    </h2>
+
+                    <p class="text-muted">
+                        Analyse a website to create
+                        the first scan record.
+                    </p>
+
+                    <a
+                        href="/"
+                        class="btn btn-primary"
+                    >
+                        Analyse Website
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

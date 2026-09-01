@@ -1,0 +1,218 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+<section class="hero-section py-5">
+
+    <div class="container">
+
+        <div
+            class="row justify-content-center"
+        >
+
+            <div
+                class="col-lg-8 col-xl-7"
+            >
+
+                <div class="text-center mb-4">
+
+                    <h1
+                        class="display-5 fw-bold"
+                    >
+                        Check a Website Before You Trust It
+                    </h1>
+
+                    <p
+                        class="lead text-muted"
+                    >
+                        Analyse a website using heuristic
+                        and behavioural evidence to estimate
+                        whether it is legitimate or potentially
+                        fraudulent.
+                    </p>
+
+                </div>
+
+
+                <div
+                    class="card shadow-sm border-0 scan-card"
+                >
+
+                    <div class="card-body p-4 p-md-5">
+
+                        <form id="scanForm">
+
+                            <label
+                                for="urlInput"
+                                class="form-label fw-semibold"
+                            >
+                                Website URL
+                            </label>
+
+                            <div
+                                class="input-group input-group-lg"
+                            >
+
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="urlInput"
+                                    name="url"
+                                    placeholder="https://example.com"
+                                    autocomplete="off"
+                                    required
+                                >
+
+                                <button
+                                    class="btn btn-primary px-4"
+                                    id="analyseButton"
+                                    type="submit"
+                                >
+                                    Analyse Website
+                                </button>
+
+                            </div>
+
+                            <div
+                                class="form-text mt-2"
+                            >
+                                Only HTTP and HTTPS website
+                                addresses are accepted.
+                            </div>
+
+                        </form>
+
+
+                        <div
+                            id="loadingPanel"
+                            class="text-center mt-4 d-none"
+                        >
+
+                            <div
+                                class="spinner-border"
+                                role="status"
+                            >
+                                <span
+                                    class="visually-hidden"
+                                >
+                                    Analysing...
+                                </span>
+                            </div>
+
+                            <p
+                                class="mt-3 mb-0 fw-semibold"
+                            >
+                                Analysing website...
+                            </p>
+
+                            <p
+                                class="text-muted small"
+                            >
+                                Heuristic and behavioural
+                                collection may take several
+                                seconds.
+                            </p>
+
+                        </div>
+
+
+                        <div
+                            id="errorPanel"
+                            class="alert alert-danger mt-4 d-none"
+                            role="alert"
+                        >
+
+                            <strong>
+                                Analysis could not be completed.
+                            </strong>
+
+                            <div
+                                id="errorMessage"
+                                class="mt-1"
+                            ></div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="row g-3 mt-4"
+                >
+
+                    <div class="col-md-4">
+
+                        <div
+                            class="info-box h-100"
+                        >
+                            <h5>
+                                Heuristic Analysis
+                            </h5>
+
+                            <p class="mb-0 text-muted">
+                                Examines URL, domain, TLS,
+                                webpage and structural indicators.
+                            </p>
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-md-4">
+
+                        <div
+                            class="info-box h-100"
+                        >
+                            <h5>
+                                Behavioural Analysis
+                            </h5>
+
+                            <p class="mb-0 text-muted">
+                                Observes redirects, navigation,
+                                popups, forms and runtime activity
+                                in a controlled browser.
+                            </p>
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-md-4">
+
+                        <div
+                            class="info-box h-100"
+                        >
+                            <h5>
+                                Hybrid Decision
+                            </h5>
+
+                            <p class="mb-0 text-muted">
+                                Combines RF-H and RF-B
+                                probabilities using the approved
+                                fusion rule.
+                            </p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script src="/static/js/scan.js"></script>
+
+{% endblock %}
