@@ -159,6 +159,11 @@ class ScanService:
 
         scan_id = scan.scan_id
 
+        # Preserve the scan record before any external
+        # validation, network collection, browser
+        # execution or model inference begins.
+        self.repository.commit()
+
         try:
 
             self.repository.add_event(
@@ -356,12 +361,68 @@ class ScanService:
 
             self.repository.rollback()
 
-            # A rollback may remove the newly created
-            # scan if nothing had yet been committed.
-            # We deliberately re-raise here rather
-            # than fabricating a successful result.
-            raise
+            try:
 
+                self.repository.fail_scan(
+                    scan=scan,
+                    error_code=(
+                        "internal_application_error"
+                    ),
+                    error_message=(
+                        "An internal application error "
+                        "prevented the scan from being "
+                        "completed."
+                    ),
+                )
+
+                self.repository.add_log(
+                    level="ERROR",
+                    component="ScanService",
+                    message=(
+                        "Unexpected scan failure."
+                    ),
+                    scan_id=scan_id,
+                    details={
+                        "exception_type":
+                            type(error).__name__,
+                        "exception_message":
+                            str(error),
+                    },
+                )
+
+                self.repository.commit()
+
+            except Exception:
+
+                self.repository.rollback()
+
+            return ScanResponse(
+                scan_id=scan_id,
+                submitted_url=submitted_url,
+                normalized_url=None,
+                status="failed",
+                behavioural_available=False,
+                primary_configuration=None,
+                predicted_label=None,
+                predicted_class=None,
+                scam_probability=None,
+                heuristic_result=None,
+                behavioural_result=None,
+                hybrid_result=None,
+                message=(
+                    "An internal application error "
+                    "prevented the scan from being "
+                    "completed."
+                ),
+                error_code=(
+                    "internal_application_error"
+                ),
+                error_message=(
+                    "An internal application error "
+                    "prevented the scan from being "
+                    "completed."
+                ),
+            )
     # =================================================
     # Validation
     # =================================================

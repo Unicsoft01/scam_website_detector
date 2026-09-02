@@ -151,6 +151,42 @@
 
     </div>
 
+    {% if scan.scan_status == "failed" %}
+
+    <div class="alert alert-danger">
+        <h5>
+            Analysis Could Not Be Completed
+        </h5>
+
+        <p>
+            {{ scan.error_message }}
+        </p>
+
+        <p class="mb-0">
+            No Legitimate or Scam classification
+            has been assigned.
+        </p>
+    </div>
+
+    {% elif scan.scan_status == "partial" %}
+
+    <div class="alert alert-warning">
+        <h5>
+            Partial Analysis
+        </h5>
+
+        <p>
+            {{ scan.error_message }}
+        </p>
+
+        <p class="mb-0">
+            The displayed result is based only on
+            the analysis components that completed
+            successfully.
+        </p>
+    </div>
+
+    {% endif %}
 
     {% if scan.scan_status != "completed" %}
 

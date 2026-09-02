@@ -23,6 +23,7 @@ class ScanResponse:
     behavioural_available: Optional[bool]
 
     primary_configuration: Optional[str]
+
     predicted_label: Optional[int]
     predicted_class: Optional[str]
     scam_probability: Optional[float]
@@ -32,3 +33,7 @@ class ScanResponse:
     hybrid_result: Optional[ModelDecision]
 
     message: str
+
+    configuration: Optional[str] = None
+    error_code: Optional[str] = None
+    error_message: Optional[str] = None
