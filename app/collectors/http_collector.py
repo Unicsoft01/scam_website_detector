@@ -251,7 +251,13 @@ def collect_static_page(
     if client is None:
         client = httpx.Client(
             timeout=httpx.Timeout(
-                timeout_seconds
+                connect=min(
+                    timeout_seconds,
+                    5.0,
+                ),
+                read=timeout_seconds,
+                write=5.0,
+                pool=5.0,
             ),
             follow_redirects=False,
             headers={

@@ -17,6 +17,44 @@ ALLOWED_SCHEMES = {
     "https",
 }
 
+MAX_URL_LENGTH = 2048
+
+
+# Defence-in-depth only. A port not listed here is not
+# automatically considered safe; destination checks still apply.
+BLOCKED_PORTS = {
+    0,
+    20,
+    21,
+    22,
+    23,
+    25,
+    53,
+    110,
+    135,
+    137,
+    138,
+    139,
+    143,
+    445,
+    465,
+    587,
+    993,
+    995,
+    1433,
+    1521,
+    2375,
+    2376,
+    3306,
+    3389,
+    5432,
+    6379,
+    8086,
+    9200,
+    11211,
+    27017,
+}
+
 
 @dataclass
 class URLValidationResult:
@@ -25,12 +63,83 @@ class URLValidationResult:
     reason: Optional[str]
 
 
+def _contains_control_characters(value: str) -> bool:
+    return any(
+        ord(character) < 32
+        or ord(character) == 127
+        for character in value
+    )
+
+
+def _is_valid_hostname(hostname: str) -> bool:
+    hostname = hostname.strip().rstrip(".")
+
+    if not hostname:
+        return False
+
+    try:
+        ipaddress.ip_address(hostname)
+        return True
+    except ValueError:
+        pass
+
+    try:
+        ascii_hostname = hostname.encode("idna").decode("ascii")
+    except UnicodeError:
+        return False
+
+    if len(ascii_hostname) > 253:
+        return False
+
+    labels = ascii_hostname.split(".")
+
+    if any(not label for label in labels):
+        return False
+
+    for label in labels:
+        if len(label) > 63:
+            return False
+
+        if label.startswith("-") or label.endswith("-"):
+            return False
+
+        for character in label:
+            if not (
+                character.isalnum()
+                or character == "-"
+            ):
+                return False
+
+    return True
+
+
+def _normalized_netloc(
+    hostname: str,
+    port: Optional[int],
+) -> str:
+    try:
+        ip = ipaddress.ip_address(hostname)
+
+        if isinstance(ip, ipaddress.IPv6Address):
+            netloc = f"[{hostname}]"
+        else:
+            netloc = hostname
+
+    except ValueError:
+        netloc = hostname
+
+    if port is not None:
+        netloc += f":{port}"
+
+    return netloc
+
+
 def normalize_url(value: str) -> Optional[str]:
     """
     Normalize a URL conservatively.
 
-    Returns the normalized URL when valid enough for further
-    validation, otherwise returns None.
+    Returns the normalized URL when suitable for further validation,
+    otherwise returns None.
     """
 
     if value is None:
@@ -39,6 +148,12 @@ def normalize_url(value: str) -> Optional[str]:
     value = str(value).strip()
 
     if not value:
+        return None
+
+    if len(value) > MAX_URL_LENGTH:
+        return None
+
+    if _contains_control_characters(value):
         return None
 
     try:
@@ -51,6 +166,12 @@ def normalize_url(value: str) -> Optional[str]:
     if scheme not in ALLOWED_SCHEMES:
         return None
 
+    if (
+        parsed.username is not None
+        or parsed.password is not None
+    ):
+        return None
+
     hostname = parsed.hostname
 
     if not hostname:
@@ -58,43 +179,35 @@ def normalize_url(value: str) -> Optional[str]:
 
     hostname = hostname.lower().rstrip(".")
 
+    if not _is_valid_hostname(hostname):
+        return None
+
     try:
         port = parsed.port
     except ValueError:
         return None
 
-    # Remove default ports.
-    if (
-        scheme == "http"
-        and port == 80
-    ):
-        port = None
-
-    if (
-        scheme == "https"
-        and port == 443
-    ):
-        port = None
-
-    # Preserve optional user information for now.
-    userinfo = ""
-
-    if parsed.username:
-        userinfo = parsed.username
-
-        if parsed.password:
-            userinfo += f":{parsed.password}"
-
-        userinfo += "@"
-
-    netloc = userinfo + hostname
-
     if port is not None:
-        netloc += f":{port}"
+        if not 1 <= port <= 65535:
+            return None
+
+        if port in BLOCKED_PORTS:
+            return None
+
+    if scheme == "http" and port == 80:
+        port = None
+
+    if scheme == "https" and port == 443:
+        port = None
+
+    netloc = _normalized_netloc(
+        hostname,
+        port,
+    )
 
     path = parsed.path or "/"
 
-    normalized = urlunsplit(
+    return urlunsplit(
         (
             scheme,
             netloc,
@@ -104,12 +217,11 @@ def normalize_url(value: str) -> Optional[str]:
         )
     )
 
-    return normalized
-
 
 def validate_url(value: str) -> URLValidationResult:
     """
-    Perform syntactic URL validation before DNS/network checks.
+    Perform conservative syntactic URL validation before DNS/network
+    checks.
     """
 
     if value is None:
@@ -128,6 +240,20 @@ def validate_url(value: str) -> URLValidationResult:
             reason="URL is empty.",
         )
 
+    if len(value) > MAX_URL_LENGTH:
+        return URLValidationResult(
+            is_valid=False,
+            normalized_url=None,
+            reason="URL exceeds the permitted length.",
+        )
+
+    if _contains_control_characters(value):
+        return URLValidationResult(
+            is_valid=False,
+            normalized_url=None,
+            reason="URL contains invalid control characters.",
+        )
+
     try:
         parsed = urlsplit(value)
     except Exception:
@@ -144,21 +270,63 @@ def validate_url(value: str) -> URLValidationResult:
             reason="Only HTTP and HTTPS URLs are allowed.",
         )
 
-    if not parsed.hostname:
+    hostname = parsed.hostname
+
+    if not hostname:
         return URLValidationResult(
             is_valid=False,
             normalized_url=None,
             reason="URL does not contain a valid hostname.",
         )
 
+    if (
+        parsed.username is not None
+        or parsed.password is not None
+    ):
+        return URLValidationResult(
+            is_valid=False,
+            normalized_url=None,
+            reason=(
+                "URLs containing embedded credentials "
+                "are not permitted."
+            ),
+        )
+
+    hostname = hostname.lower().rstrip(".")
+
+    if not _is_valid_hostname(hostname):
+        return URLValidationResult(
+            is_valid=False,
+            normalized_url=None,
+            reason="URL contains a malformed hostname.",
+        )
+
     try:
-        parsed.port
+        port = parsed.port
     except ValueError:
         return URLValidationResult(
             is_valid=False,
             normalized_url=None,
             reason="URL contains an invalid port.",
         )
+
+    if port is not None:
+        if not 1 <= port <= 65535:
+            return URLValidationResult(
+                is_valid=False,
+                normalized_url=None,
+                reason="URL contains an invalid port.",
+            )
+
+        if port in BLOCKED_PORTS:
+            return URLValidationResult(
+                is_valid=False,
+                normalized_url=None,
+                reason=(
+                    "The requested network port is "
+                    "not permitted for website analysis."
+                ),
+            )
 
     normalized = normalize_url(value)
 
@@ -200,9 +368,7 @@ def is_disallowed_ip(ip_value: str) -> bool:
 
 def resolve_hostname(hostname: str) -> list[str]:
     """
-    Resolve a hostname to its IPv4/IPv6 addresses.
-
-    Raises socket.gaierror if DNS resolution fails.
+    Resolve a hostname to all discovered IPv4/IPv6 addresses.
     """
 
     results = socket.getaddrinfo(
@@ -211,7 +377,7 @@ def resolve_hostname(hostname: str) -> list[str]:
         type=socket.SOCK_STREAM,
     )
 
-    addresses = []
+    addresses: list[str] = []
 
     for result in results:
         sockaddr = result[4]
@@ -228,14 +394,14 @@ def resolve_hostname(hostname: str) -> list[str]:
 
 
 def is_public_destination(
-    url: str
+    url: str,
 ) -> tuple[bool, str]:
     """
-    Confirm that a URL resolves only to public destinations.
+    Confirm that a URL currently resolves only to public destinations.
 
-    Returns:
-        (True, message) if allowed
-        (False, reason) otherwise
+    This reduces SSRF exposure but does not by itself eliminate DNS
+    rebinding/TOCTOU risk. Callers must also revalidate redirects and
+    browser requests and should use network isolation where practical.
     """
 
     validation = validate_url(url)
@@ -243,14 +409,10 @@ def is_public_destination(
     if not validation.is_valid:
         return (
             False,
-            validation.reason
-            or "Invalid URL.",
+            validation.reason or "Invalid URL.",
         )
 
-    parsed = urlsplit(
-        validation.normalized_url
-    )
-
+    parsed = urlsplit(validation.normalized_url)
     hostname = parsed.hostname
 
     if not hostname:
@@ -259,15 +421,16 @@ def is_public_destination(
             "Hostname is missing.",
         )
 
-    # Direct IP literal.
     try:
         ipaddress.ip_address(hostname)
 
         if is_disallowed_ip(hostname):
             return (
                 False,
-                "Private, local, reserved, or otherwise "
-                "non-public IP addresses are not allowed.",
+                (
+                    "Private, local, reserved, or otherwise "
+                    "non-public IP addresses are not allowed."
+                ),
             )
 
         return (
@@ -278,25 +441,19 @@ def is_public_destination(
     except ValueError:
         pass
 
-    # Hostname-based destination.
     lowered = hostname.lower()
 
-    if lowered == "localhost":
+    if (
+        lowered == "localhost"
+        or lowered.endswith(".localhost")
+    ):
         return (
             False,
-            "Localhost is not allowed.",
-        )
-
-    if lowered.endswith(".localhost"):
-        return (
-            False,
-            "Localhost domains are not allowed.",
+            "Localhost destinations are not allowed.",
         )
 
     try:
-        addresses = resolve_hostname(
-            hostname
-        )
+        addresses = resolve_hostname(hostname)
 
     except socket.gaierror:
         return (
@@ -334,7 +491,7 @@ def is_public_destination(
 
 
 def get_registrable_domain(
-    url: str
+    url: str,
 ) -> Optional[str]:
     """
     Extract the registrable domain for comparison purposes.
@@ -345,10 +502,7 @@ def get_registrable_domain(
     if not validation.is_valid:
         return None
 
-    parsed = urlsplit(
-        validation.normalized_url
-    )
-
+    parsed = urlsplit(validation.normalized_url)
     hostname = parsed.hostname
 
     if not hostname:
@@ -356,15 +510,12 @@ def get_registrable_domain(
 
     try:
         ipaddress.ip_address(hostname)
-
         return hostname.lower()
 
     except ValueError:
         pass
 
-    extracted = DOMAIN_EXTRACTOR(
-        hostname
-    )
+    extracted = DOMAIN_EXTRACTOR(hostname)
 
     if (
         extracted.domain
@@ -379,10 +530,11 @@ def get_registrable_domain(
 
 
 def validate_redirect_target(
-    redirect_url: str
+    redirect_url: str,
 ) -> tuple[bool, str]:
     """
-    Apply the same destination-safety checks to a redirect target.
+    Apply the same validation and public-destination checks to every
+    redirect target.
     """
 
     return is_public_destination(

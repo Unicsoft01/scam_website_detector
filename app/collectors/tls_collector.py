@@ -5,7 +5,10 @@ from datetime import datetime, timezone
 from typing import Optional
 from urllib.parse import urlsplit
 
-from app.core.url_security import normalize_url
+from app.core.url_security import (
+    is_public_destination,
+    normalize_url,
+)
 
 
 @dataclass
@@ -99,6 +102,18 @@ def collect_tls_information(
     if normalized is None:
         raise ValueError(
             "URL must be a valid HTTP or HTTPS URL."
+        )
+
+    allowed, reason = (
+        is_public_destination(
+            normalized
+        )
+    )
+
+    if not allowed:
+        raise ValueError(
+            "TLS collection blocked: "
+            f"{reason}"
         )
 
     parsed = urlsplit(

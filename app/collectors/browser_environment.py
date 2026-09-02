@@ -42,6 +42,12 @@ INTERNAL_BROWSER_SCHEMES = {
     "data",
 }
 
+MAX_RECORDED_REQUESTS = 500
+MAX_RECORDED_NAVIGATIONS = 100
+MAX_RECORDED_BLOCKED_REQUESTS = 200
+MAX_RECORDED_FAILED_REQUESTS = 200
+MAX_RECORDED_PAGE_ERRORS = 100
+
 
 # The script is an immediately invoked function expression (IIFE).
 # This means it works correctly with BOTH:
@@ -236,14 +242,19 @@ def _block_request(
 
     request = route.request
 
-    state.blocked_requests.append(
-        {
-            "url": request.url,
-            "method": request.method,
-            "resource_type": request.resource_type,
-            "reason": reason,
-        }
-    )
+    if (
+        len(state.blocked_requests)
+        < MAX_RECORDED_BLOCKED_REQUESTS
+    ):
+        state.blocked_requests.append(
+            {
+                "url": request.url,
+                "method": request.method,
+                "resource_type":
+                    request.resource_type,
+                "reason": reason,
+            }
+        )
 
     route.abort()
 
@@ -262,9 +273,13 @@ def _handle_route(
     request = route.request
     request_url = request.url
 
-    state.request_urls.append(
-        request_url
-    )
+    if (
+        len(state.request_urls)
+        < MAX_RECORDED_REQUESTS
+    ):
+        state.request_urls.append(
+            request_url
+        )
 
     try:
         parsed = urlsplit(
@@ -416,11 +431,17 @@ def _handle_page_error(
     Record JavaScript/runtime page errors.
     """
 
+    # Keep the total count even after detailed error storage
+    # reaches its memory-safety limit.
     state.page_error_count += 1
 
-    state.page_errors.append(
-        str(error)
-    )
+    if (
+        len(state.page_errors)
+        < MAX_RECORDED_PAGE_ERRORS
+    ):
+        state.page_errors.append(
+            str(error)
+        )
 
 
 def _handle_failed_request(
@@ -431,9 +452,13 @@ def _handle_failed_request(
     Record network requests that failed.
     """
 
-    state.failed_requests.append(
-        request.url
-    )
+    if (
+        len(state.failed_requests)
+        < MAX_RECORDED_FAILED_REQUESTS
+    ):
+        state.failed_requests.append(
+            request.url
+        )
 
 
 def _handle_navigation(
@@ -445,7 +470,11 @@ def _handle_navigation(
     """
 
     try:
-        if frame == frame.page.main_frame:
+        if (
+            frame == frame.page.main_frame
+            and len(state.navigation_urls)
+            < MAX_RECORDED_NAVIGATIONS
+        ):
             state.navigation_urls.append(
                 frame.url
             )
@@ -529,9 +558,18 @@ def _create_context(
         java_script_enabled=True,
         ignore_https_errors=False,
         service_workers="block",
+
         viewport={
             "width": 1280,
             "height": 720,
+        },
+
+        bypass_csp=False,
+
+        permissions=[],
+
+        extra_http_headers={
+            "DNT": "1",
         },
     )
 
