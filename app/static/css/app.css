@@ -34,3 +34,26 @@ body {
 .navbar-brand {
     letter-spacing: 0.2px;
 }
+
+.evidence-indicator {
+    background: #ffffff;
+    border: 1px solid #dee2e6;
+    border-radius: 0.75rem;
+    padding: 1rem;
+}
+
+.evidence-high {
+    border-left: 4px solid #dc3545;
+}
+
+.evidence-medium {
+    border-left: 4px solid #ffc107;
+}
+
+.evidence-low {
+    border-left: 4px solid #6c757d;
+}
+
+.evidence-info {
+    border-left: 4px solid #0dcaf0;
+}

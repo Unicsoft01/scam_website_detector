@@ -265,141 +265,168 @@
     </div>
 
 
-    <div class="row g-4 mb-4">
+    {% if evidence_indicators %}
 
-        <div class="col-lg-6">
+    <div
+        class="card shadow-sm border-0 mb-4"
+    >
 
-            <div
-                class="card h-100 shadow-sm border-0"
-            >
+        <div class="card-body p-4">
 
-                <div class="card-body">
+            <div class="mb-4">
 
-                    <h2 class="h5">
-                        Heuristic Indicators
-                    </h2>
+                <h2 class="h5 mb-1">
+                    Key Evidence Observed
+                </h2>
 
-                    <p
-                        class="text-muted small"
-                    >
-                        Selected non-zero observations
-                        recorded during static analysis.
-                    </p>
-
-                    {% if heuristic_indicators %}
-
-                        <ul
-                            class="list-group list-group-flush"
-                        >
-
-                        {% for item in heuristic_indicators %}
-
-                            <li
-                                class="list-group-item
-                                       d-flex
-                                       justify-content-between
-                                       px-0"
-                            >
-
-                                <span>
-                                    {{ item.name }}
-                                </span>
-
-                                <span
-                                    class="badge text-bg-light"
-                                >
-                                    {{ item.value }}
-                                </span>
-
-                            </li>
-
-                        {% endfor %}
-
-                        </ul>
-
-                    {% else %}
-
-                        <p class="text-muted mb-0">
-                            No displayable heuristic
-                            indicators were recorded.
-                        </p>
-
-                    {% endif %}
-
-                </div>
+                <p class="text-muted small mb-0">
+                    These indicators summarise
+                    observations made during analysis.
+                    They provide context for the result
+                    but do not individually prove that
+                    the website is fraudulent.
+                </p>
 
             </div>
 
-        </div>
 
+            <div class="row g-3">
 
-        <div class="col-lg-6">
+                {% for indicator in evidence_indicators %}
 
-            <div
-                class="card h-100 shadow-sm border-0"
-            >
+                <div class="col-md-6">
 
-                <div class="card-body">
-
-                    <h2 class="h5">
-                        Behavioural Indicators
-                    </h2>
-
-                    <p
-                        class="text-muted small"
+                    <div
+                        class="evidence-indicator
+                            h-100
+                            evidence-{{ indicator.severity }}"
                     >
-                        Selected non-zero observations
-                        recorded during controlled runtime
-                        analysis.
-                    </p>
 
-                    {% if behavioural_indicators %}
-
-                        <ul
-                            class="list-group list-group-flush"
+                        <div
+                            class="d-flex
+                                justify-content-between
+                                gap-3"
                         >
 
-                        {% for item in behavioural_indicators %}
+                            <div>
 
-                            <li
-                                class="list-group-item
-                                       d-flex
-                                       justify-content-between
-                                       px-0"
-                            >
+                                <h3
+                                    class="h6 mb-1"
+                                >
+                                    {{ indicator.title }}
+                                </h3>
 
-                                <span>
-                                    {{ item.name }}
-                                </span>
+                                <div
+                                    class="small text-muted"
+                                >
+                                    {{ indicator.category }}
+                                    ·
+                                    {{ indicator.source }}
+                                </div>
+
+                            </div>
+
+
+                            {% if indicator.severity == "high" %}
 
                                 <span
-                                    class="badge text-bg-light"
+                                    class="badge
+                                        text-bg-danger
+                                        align-self-start"
                                 >
-                                    {{ item.value }}
+                                    Higher concern
                                 </span>
 
-                            </li>
+                            {% elif indicator.severity == "medium" %}
 
-                        {% endfor %}
+                                <span
+                                    class="badge
+                                        text-bg-warning
+                                        align-self-start"
+                                >
+                                    Review
+                                </span>
 
-                        </ul>
+                            {% elif indicator.severity == "low" %}
 
-                    {% else %}
+                                <span
+                                    class="badge
+                                        text-bg-secondary
+                                        align-self-start"
+                                >
+                                    Observation
+                                </span>
 
-                        <p class="text-muted mb-0">
-                            No displayable behavioural
-                            indicators were recorded.
+                            {% else %}
+
+                                <span
+                                    class="badge
+                                        text-bg-light
+                                        align-self-start"
+                                >
+                                    Information
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <p
+                            class="small mt-3 mb-2"
+                        >
+                            {{ indicator.description }}
                         </p>
 
-                    {% endif %}
+
+                        {% if indicator.observed_value is not none %}
+
+                        <div
+                            class="small text-muted"
+                        >
+                            Observed value:
+                            <strong>
+                                {{ indicator.observed_value }}
+                            </strong>
+                        </div>
+
+                        {% endif %}
+
+                    </div>
 
                 </div>
 
+                {% endfor %}
+
+            </div>
+
+
+            <div
+                class="alert alert-light border
+                    small mt-4 mb-0"
+            >
+                <strong>
+                    Interpretation note:
+                </strong>
+
+                The classification is generated
+                by the trained detection model and,
+                where available, hybrid probability
+                fusion. The observations above are
+                supporting evidence summaries rather
+                than independent proof of fraud.
             </div>
 
         </div>
 
     </div>
+
+    {% endif %}
+
+
+<div class="row g-4 mb-4">
+
+    <div class="col-lg-6">
 
 
     <div

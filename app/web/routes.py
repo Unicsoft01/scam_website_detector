@@ -24,6 +24,9 @@ from app.services.scan_query_service import (
     ScanQueryService,
 )
 
+from app.services.explanation_service import (
+    ExplanationService,
+)
 
 router = APIRouter()
 
@@ -219,6 +222,37 @@ def result_page(
         )
     )
 
+    explanation_service = (
+        ExplanationService()
+    )
+
+
+    heuristic_feature_data = (
+        heuristic_observation.feature_data
+        if heuristic_observation
+        else None
+    )
+
+
+    behavioural_feature_data = (
+        behavioural_observation.feature_data
+        if behavioural_observation
+        else None
+    )
+
+
+    evidence_indicators = (
+        explanation_service.explain(
+            heuristic_features=(
+                heuristic_feature_data
+            ),
+            behavioural_features=(
+                behavioural_feature_data
+            ),
+            max_indicators=10,
+        )
+    )
+
     heuristic_indicators = (
         _extract_detected_indicators(
             (
@@ -333,6 +367,9 @@ def result_page(
 
             "total_duration_ms":
                 total_duration_ms,
+
+            "evidence_indicators":
+                evidence_indicators,
         },
     )
 
