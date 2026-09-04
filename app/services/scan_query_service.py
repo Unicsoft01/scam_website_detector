@@ -176,3 +176,7 @@ class ScanQueryService:
             total,
             scans,
         )
+
+    # https://github.com/ScamFerret/artifact/tree/master/expanded_dataset/scam_websites
+    # Invoke-WebRequest -Uri "https://raw.githubusercontent.com/ScamFerret/artifact/master/expanded_dataset/scam_websites/cryptocurrency_groundtruth_url.txt" -OutFile "data\raw\scamferret_expanded_2025\cryptocurrency_groundtruth_url.txt"
+    
