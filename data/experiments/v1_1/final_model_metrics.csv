@@ -1,0 +1,4 @@
+model,accuracy,precision,recall,f1
+RF-H,0.7,1.0,0.5714,0.7273
+RF-B,0.7,1.0,0.5714,0.7273
+Hybrid,0.7,1.0,0.5714,0.7273

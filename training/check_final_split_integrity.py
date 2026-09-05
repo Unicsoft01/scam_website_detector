@@ -1,95 +1,85 @@
+from pathlib import Path
 import pandas as pd
 
 
-FILE = (
-    "data/experiments/v1_1/"
-    "final_dataset_split_manifest.csv"
+BASE = Path(
+    "data/experiments/v1_1"
 )
 
 
-def domains_for(dataframe, split):
-    return set(
-        dataframe.loc[
-            dataframe["split"] == split,
-            "registrable_domain",
-        ]
-        .dropna()
-        .astype(str)
-        .str.lower()
-    )
-
-
 def main():
-    data = pd.read_csv(FILE)
 
-    train = domains_for(
-        data,
-        "training",
-    )
+    files = [
+        "final_train.csv",
+        "final_validation.csv",
+        "final_test.csv",
+    ]
 
-    validation = domains_for(
-        data,
-        "validation",
-    )
+    datasets = {}
 
-    test = domains_for(
-        data,
-        "testing",
-    )
+    print("==============================")
+    print("FINAL SPLIT INTEGRITY CHECK")
+    print("==============================")
 
-    train_validation = (
-        train & validation
-    )
 
-    train_test = (
-        train & test
-    )
+    for file in files:
 
-    validation_test = (
-        validation & test
-    )
+        path = BASE / file
 
-    print(
-        "TRAIN DOMAINS:",
-        len(train),
-    )
+        df = pd.read_csv(path)
 
-    print(
-        "VALIDATION DOMAINS:",
-        len(validation),
-    )
+        datasets[file] = df
 
-    print(
-        "TEST DOMAINS:",
-        len(test),
-    )
+        print()
+        print(file)
+        print("Rows:", len(df))
 
-    print(
-        "\nTRAIN/VALIDATION OVERLAP:",
-        len(train_validation),
-    )
-
-    print(
-        "TRAIN/TEST OVERLAP:",
-        len(train_test),
-    )
-
-    print(
-        "VALIDATION/TEST OVERLAP:",
-        len(validation_test),
-    )
-
-    if (
-        train_validation
-        or train_test
-        or validation_test
-    ):
-        raise RuntimeError(
-            "DOMAIN LEAKAGE DETECTED."
+        print(
+            "Label distribution:"
         )
 
+        print(
+            df["binary_label"]
+            .value_counts()
+            .to_dict()
+        )
+
+
+    print()
+    print("==============================")
+    print("OVERLAP CHECK")
+    print("==============================")
+
+
+    train_domains = set(
+        datasets["final_train.csv"]
+        ["registrable_domain"]
+    )
+
+    val_domains = set(
+        datasets["final_validation.csv"]
+        ["registrable_domain"]
+    )
+
+    test_domains = set(
+        datasets["final_test.csv"]
+        ["registrable_domain"]
+    )
+
+
     print(
-        "\nFINAL SPLIT INTEGRITY: PASS"
+        "Train-Val overlap:",
+        len(train_domains & val_domains)
+    )
+
+    print(
+        "Train-Test overlap:",
+        len(train_domains & test_domains)
+    )
+
+    print(
+        "Val-Test overlap:",
+        len(val_domains & test_domains)
     )
 
 

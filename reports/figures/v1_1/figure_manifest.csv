@@ -1,0 +1,10 @@
+figure_number,filename,description
+1,01_confusion_matrix_rf_h.png,Confusion matrix for the heuristic-only Random Forest model.
+2,02_confusion_matrix_rf_b.png,Confusion matrix for the behavioural-only Random Forest model.
+3,03_confusion_matrix_hybrid.png,Confusion matrix for the hybrid detection model.
+4,04_model_metric_comparison.png,"Comparison of accuracy, precision, recall and F1-score."
+5,05_roc_curves.png,"ROC curves and AUC values for RF-H, RF-B and Hybrid."
+6,06_false_positive_rate.png,False-positive-rate comparison across the three detection configurations.
+7,07_response_time_comparison.png,Median and P95 operational processing times.
+8,10_per_category_recall.png,Per-category scam recall for categories meeting the minimum sample-size rule.
+9,11_hybrid_classification_outcomes.png,"Counts of true negatives, false positives, false negatives and true positives for the hybrid model."
