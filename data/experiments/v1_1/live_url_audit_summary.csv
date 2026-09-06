@@ -1,0 +1,8 @@
+live_status,count,percentage
+dns_failure,698,59.61
+accessible,294,25.11
+inaccessible,78,6.66
+timeout,68,5.81
+tls_failure,25,2.13
+non_html,5,0.43
+oversized_response,3,0.26

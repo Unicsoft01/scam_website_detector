@@ -1,0 +1,5 @@
+live_status,count,percentage
+dns_failure,44,88.0
+accessible,3,6.0
+tls_failure,2,4.0
+timeout,1,2.0
