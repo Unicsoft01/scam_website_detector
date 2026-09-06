@@ -1,0 +1,28 @@
+MODEL FREEZE RECORD
+
+Version:
+v1.1.0
+
+Purpose:
+Final experimental scam website detection model.
+
+Frozen components:
+- Heuristic feature set
+- Behavioural feature set
+- RF-H
+- RF-B
+- Hybrid alpha
+- Classification thresholds
+- Domain-level dataset split
+- Runtime software version
+
+Test-set policy:
+The final test set was excluded from model fitting,
+feature selection, hyperparameter selection, alpha
+selection and threshold selection.
+
+Post-test tuning:
+None permitted.
+
+Any future model changes must use a new model version
+and must not retroactively modify v1.1.0.

@@ -1,0 +1,21 @@
+{
+  "model_version": "v1.1.0",
+  "status": "final_frozen_experimental_model",
+  "binary_target": {
+    "0": "legitimate",
+    "1": "scam"
+  },
+  "models": {
+    "heuristic": "rf_heuristic.joblib",
+    "behavioural": "rf_behavioural.joblib"
+  },
+  "feature_files": {
+    "heuristic": "heuristic_features.json",
+    "behavioural": "behavioural_features.json"
+  },
+  "fusion_config": "hybrid_fusion_config.json",
+  "dataset_split": "final_dataset_split_manifest.csv",
+  "evaluation_results": "evaluation_results.json",
+  "test_data_used_once": true,
+  "post_test_tuning_performed": false
+}

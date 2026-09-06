@@ -1,0 +1,4 @@
+stage,n,median_ms,p95_ms
+Validation,174,0.0,0.0
+Heuristic,174,19996.7055,27674.692949999993
+Behavioural,174,6716.121,17221.354049999998

@@ -1,0 +1,8 @@
+{
+  "alpha": 0.5,
+  "heuristic_threshold": 0.5,
+  "behavioural_threshold": 0.5,
+  "hybrid_threshold": 0.5,
+  "selection_basis": "validation_data_only",
+  "frozen_before_final_test": true
+}
