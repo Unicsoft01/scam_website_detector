@@ -2,14 +2,22 @@
 
 title Scam Website Detector
 
+cd /d "%~dp0"
 
-call venv\Scripts\activate
+echo ==========================================
+echo SCAM WEBSITE DETECTOR
+echo Okoroafor Stella
+echo ==========================================
+echo.
 
+echo Activating virtual environment...
+call .venv\Scripts\activate.bat
+
+echo.
 
 echo Starting Scam Website Detector...
 
-
-python -m app.main
+uvicorn app.main:app --reload
 
 
 pause
