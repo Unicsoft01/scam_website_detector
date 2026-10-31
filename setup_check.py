@@ -8,6 +8,10 @@ print("SCAM WEBSITE DETECTOR HEALTH CHECK")
 print("=" * 60)
 
 
+# Number of checks that failed. Used to set the exit code.
+failures = 0
+
+
 
 # -----------------------------
 # Python Version
@@ -15,7 +19,7 @@ print("=" * 60)
 
 print("\nPYTHON CHECK")
 
-if sys.version_info >= (3,11):
+if sys.version_info >= (3, 11):
 
     print(
         "[PASS] Python:",
@@ -23,6 +27,8 @@ if sys.version_info >= (3,11):
     )
 
 else:
+
+    failures += 1
 
     print(
         "[FAIL] Python 3.11+ required"
@@ -39,7 +45,8 @@ print("\nDEPENDENCY CHECK")
 
 packages = [
 
-    "flask",
+    "fastapi",
+    "uvicorn",
     "sqlalchemy",
     "pymysql",
     "pandas",
@@ -66,6 +73,8 @@ for package in packages:
 
 
     except Exception:
+
+        failures += 1
 
         print(
             "[FAIL]",
@@ -102,6 +111,8 @@ for model in models:
         )
 
     else:
+
+        failures += 1
 
         print(
             "[FAIL]",
@@ -143,6 +154,8 @@ for file in files:
 
     else:
 
+        failures += 1
+
         print(
             "[FAIL]",
             file
@@ -178,6 +191,7 @@ try:
 
 except Exception as e:
 
+    failures += 1
 
     print(
         "[FAIL] Chromium unavailable"
@@ -221,6 +235,7 @@ try:
 
 except Exception as e:
 
+    failures += 1
 
     print(
         "[FAIL] Database connection failed"
@@ -277,6 +292,8 @@ try:
 
         else:
 
+            failures += 1
+
             print(
                 "[FAIL]",
                 table
@@ -284,6 +301,12 @@ try:
 
 
 except Exception as e:
+
+    failures += 1
+
+    print(
+        "[FAIL] Could not read database tables"
+    )
 
     print(e)
 
@@ -304,4 +327,21 @@ print(
 )
 
 
+if failures:
+
+    print(
+        f"RESULT: {failures} check(s) FAILED"
+    )
+
+else:
+
+    print(
+        "RESULT: all checks passed"
+    )
+
+
 print("=" * 60)
+
+
+# Exit code 0 = ready, 1 = at least one check failed.
+sys.exit(1 if failures else 0)

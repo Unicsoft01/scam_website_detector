@@ -13,7 +13,7 @@ echo.
 if not exist "setup_check.py" (
     echo [ERROR] setup_check.py was not found.
     echo.
-    echo Place this file in the project root beside app.py.
+    echo Place this file in the project root beside setup_check.py.
     echo.
     pause
     exit /b 1
@@ -66,7 +66,7 @@ if "!CHECK_RESULT!"=="0" (
     echo The application is ready to run.
     echo.
     echo Next:
-    echo Double-click run_system.bat
+    echo Double-click run_application.bat
 ) else (
     echo   SETUP CHECK FAILED
     echo ============================================================

@@ -20,18 +20,18 @@ The completed system provides a web-based interface for URL submission, controll
 
 ### Project Summary
 
-| Item                 | Description                               |
-| -------------------- | ----------------------------------------- |
-| Project Type         | Academic cybersecurity research prototype |
-| Primary Task         | Scam website detection                    |
-| Detection Approaches | Heuristic and behavioural analysis        |
-| Machine Learning     | Random Forest                             |
-| Final Decision       | Hybrid evidence fusion                    |
-| Classification       | Scam / Legitimate                         |
-| Interface            | Web-based application                     |
-| Browser Analysis     | Playwright with Chromium                  |
-| Database             | MySQL                                     |
-| Backend              | Python-based application                  |
+| Item | Description |
+|---|---|
+| Project Type | Academic cybersecurity research prototype |
+| Primary Task | Scam website detection |
+| Detection Approaches | Heuristic and behavioural analysis |
+| Machine Learning | Random Forest |
+| Final Decision | Hybrid evidence fusion |
+| Classification | Scam / Legitimate |
+| Interface | Web-based application |
+| Browser Analysis | Playwright with Chromium |
+| Database | MySQL |
+| Backend | Python-based application |
 
 ---
 
@@ -51,11 +51,11 @@ The specific objectives are to:
 
 ### Objective-to-System Mapping
 
-| Research Objective                            | Implemented System Component                                          |
-| --------------------------------------------- | --------------------------------------------------------------------- |
-| Identify heuristic and behavioural indicators | Feature extraction and behavioural observation modules                |
-| Design and implement the detection system     | Web interface, collectors, feature extraction, ML and fusion services |
-| Evaluate the hybrid system                    | Experimental evaluation, performance metrics and comparative analysis |
+| Research Objective | Implemented System Component |
+|---|---|
+| Identify heuristic and behavioural indicators | Feature extraction and behavioural observation modules |
+| Design and implement the detection system | Web interface, collectors, feature extraction, ML and fusion services |
+| Evaluate the hybrid system | Experimental evaluation, performance metrics and comparative analysis |
 
 ---
 
@@ -75,9 +75,9 @@ The evaluation scope covers the following scam categories:
 
 ### 4.2 Classification Classes
 
-| Class          | Meaning                                                                             |
-| -------------- | ----------------------------------------------------------------------------------- |
-| **SCAM**       | The available evidence meets the system's criteria for scam classification.         |
+| Class | Meaning |
+|---|---|
+| **SCAM** | The available evidence meets the system's criteria for scam classification. |
 | **LEGITIMATE** | The available evidence does not meet the system's criteria for scam classification. |
 
 ### 4.3 What the System Does
@@ -112,20 +112,20 @@ The system does not:
 
 ## 5. Key System Features
 
-| Feature                        | Description                                                                      |
-| ------------------------------ | -------------------------------------------------------------------------------- |
-| URL Validation                 | Validates and prepares submitted website addresses for analysis.                 |
-| Safe Website Collection        | Collects permitted website and security information under controlled conditions. |
-| Heuristic Analysis             | Examines structural, URL, domain, HTML and security indicators.                  |
-| Behavioural Analysis           | Observes defined runtime website behaviours using controlled browser execution.  |
-| RF-Heuristic                   | Applies the trained Random Forest heuristic detection model.                     |
-| RF-Behavioural                 | Applies the trained Random Forest behavioural detection model.                   |
-| Hybrid Fusion                  | Combines heuristic and behavioural evidence for the final decision.              |
-| Scam/Legitimate Classification | Produces the final system classification.                                        |
-| Explanation                    | Presents indicators supporting the analytical result.                            |
-| Scan History                   | Stores and retrieves previous scan information.                                  |
-| Performance Measurement        | Records analysis and response-time information.                                  |
-| Error Handling                 | Provides controlled handling of invalid, inaccessible or failed scans.           |
+| Feature | Description |
+|---|---|
+| URL Validation | Validates and prepares submitted website addresses for analysis. |
+| Safe Website Collection | Collects permitted website and security information under controlled conditions. |
+| Heuristic Analysis | Examines structural, URL, domain, HTML and security indicators. |
+| Behavioural Analysis | Observes defined runtime website behaviours using controlled browser execution. |
+| RF-Heuristic | Applies the trained Random Forest heuristic detection model. |
+| RF-Behavioural | Applies the trained Random Forest behavioural detection model. |
+| Hybrid Fusion | Combines heuristic and behavioural evidence for the final decision. |
+| Scam/Legitimate Classification | Produces the final system classification. |
+| Explanation | Presents indicators supporting the analytical result. |
+| Scan History | Stores and retrieves previous scan information. |
+| Performance Measurement | Records analysis and response-time information. |
+| Error Handling | Provides controlled handling of invalid, inaccessible or failed scans. |
 
 ### Feature Flow
 
@@ -245,19 +245,19 @@ flowchart TD
 
 ### Workflow Stages
 
-| Stage                   | Description                                                                      |
-| ----------------------- | -------------------------------------------------------------------------------- |
-| 1. URL Submission       | The user submits a website address through the web interface.                    |
-| 2. URL Validation       | The system validates and prepares the URL for controlled analysis.               |
-| 3. Safe Collection      | Website and security information are collected using the available collectors.   |
-| 4. Heuristic Analysis   | Static and security-related indicators are extracted and assessed.               |
-| 5. Behavioural Analysis | Defined runtime behaviours are observed through controlled browser execution.    |
-| 6. Feature Extraction   | Collected information is transformed into model-ready features.                  |
+| Stage | Description |
+|---|---|
+| 1. URL Submission | The user submits a website address through the web interface. |
+| 2. URL Validation | The system validates and prepares the URL for controlled analysis. |
+| 3. Safe Collection | Website and security information are collected using the available collectors. |
+| 4. Heuristic Analysis | Static and security-related indicators are extracted and assessed. |
+| 5. Behavioural Analysis | Defined runtime behaviours are observed through controlled browser execution. |
+| 6. Feature Extraction | Collected information is transformed into model-ready features. |
 | 7. Model Classification | RF-Heuristic and RF-Behavioural independently process their respective evidence. |
-| 8. Hybrid Fusion        | The model outputs are combined into a final decision.                            |
-| 9. Explanation          | Relevant detection evidence is presented to the user.                            |
-| 10. Storage             | Scan information and relevant results are recorded.                              |
-| 11. Display             | The completed result is presented through the web interface.                     |
+| 8. Hybrid Fusion | The model outputs are combined into a final decision. |
+| 9. Explanation | Relevant detection evidence is presented to the user. |
+| 10. Storage | Scan information and relevant results are recorded. |
+| 11. Display | The completed result is presented through the web interface. |
 
 ---
 
@@ -427,11 +427,11 @@ Behavioural evidence therefore differs from heuristic evidence in its emphasis o
 
 ### Static and Behavioural Evidence
 
-| Evidence Type | Primary Focus                                       | Example Source                              |
-| ------------- | --------------------------------------------------- | ------------------------------------------- |
-| Heuristic     | Observable structural and security characteristics  | URL, domain, HTML and TLS information       |
-| Behavioural   | Runtime characteristics during controlled execution | Browser navigation and runtime observations |
-| Hybrid        | Combined evidence from both approaches              | RF-Heuristic + RF-Behavioural + fusion      |
+| Evidence Type | Primary Focus | Example Source |
+|---|---|---|
+| Heuristic | Observable structural and security characteristics | URL, domain, HTML and TLS information |
+| Behavioural | Runtime characteristics during controlled execution | Browser navigation and runtime observations |
+| Hybrid | Combined evidence from both approaches | RF-Heuristic + RF-Behavioural + fusion |
 
 ### Feature Architecture
 
@@ -478,14 +478,14 @@ flowchart TD
 
 The heuristic branch uses a trained Random Forest classifier. The model receives the prepared heuristic feature vector and produces a classification output used as one of the evidence sources for the final hybrid decision.
 
-| Component              | Description                                        |
-| ---------------------- | -------------------------------------------------- |
-| Detection approach     | Heuristic analysis                                 |
-| Machine-learning model | Random Forest Classifier                           |
-| Input                  | Prepared heuristic feature vector                  |
-| Output                 | Heuristic prediction and associated model evidence |
-| Role                   | Independent static/security evidence source        |
-| Model file             | `models/rf_heuristic.joblib`                       |
+| Component | Description |
+|---|---|
+| Detection approach | Heuristic analysis |
+| Machine-learning model | Random Forest Classifier |
+| Input | Prepared heuristic feature vector |
+| Output | Heuristic prediction and associated model evidence |
+| Role | Independent static/security evidence source |
+| Model file | `models/rf_heuristic.joblib` |
 
 ### 11.3 Interpretation
 
@@ -518,14 +518,14 @@ flowchart TD
 
 ### 12.2 Model Description
 
-| Component              | Description                                          |
-| ---------------------- | ---------------------------------------------------- |
-| Detection approach     | Behavioural analysis                                 |
-| Machine-learning model | Random Forest Classifier                             |
-| Input                  | Prepared behavioural feature vector                  |
-| Output                 | Behavioural prediction and associated model evidence |
-| Role                   | Independent runtime evidence source                  |
-| Model file             | `models/rf_behavioural.joblib`                       |
+| Component | Description |
+|---|---|
+| Detection approach | Behavioural analysis |
+| Machine-learning model | Random Forest Classifier |
+| Input | Prepared behavioural feature vector |
+| Output | Behavioural prediction and associated model evidence |
+| Role | Independent runtime evidence source |
+| Model file | `models/rf_behavioural.joblib` |
 
 ### 12.3 Behavioural Evidence
 
@@ -598,9 +598,9 @@ The resulting fused evidence is passed to the final classification and explanati
 
 The system produces a binary final classification based on the available analytical evidence.
 
-| Classification | Meaning                                                                             |
-| -------------- | ----------------------------------------------------------------------------------- |
-| **SCAM**       | The available evidence meets the system's criteria for scam classification.         |
+| Classification | Meaning |
+|---|---|
+| **SCAM** | The available evidence meets the system's criteria for scam classification. |
 | **LEGITIMATE** | The available evidence does not meet the system's criteria for scam classification. |
 
 ### Classification Interpretation
@@ -637,7 +637,7 @@ This makes the system more interpretable than a classification-only system becau
 > **Recommended screenshot:** Insert a screenshot of the completed result page showing the final classification together with the explanation/indicator section.
 >
 > **Figure X: Scam Detection Result and Explanation Interface**
-> _Source: Screenshot from the implemented system (2026)._
+> *Source: Screenshot from the implemented system (2026).*
 
 ---
 
@@ -647,11 +647,11 @@ The system uses a relational database to persist scan-related information and su
 
 ### 16.1 Database Technology
 
-| Technology | Purpose                                            |
-| ---------- | -------------------------------------------------- |
-| MySQL      | Persistent relational database                     |
+| Technology | Purpose |
+|---|---|
+| MySQL | Persistent relational database |
 | SQLAlchemy | Object-relational mapping and database interaction |
-| PyMySQL    | MySQL connectivity                                 |
+| PyMySQL | MySQL connectivity |
 
 ### 16.2 Database Connection
 
@@ -724,7 +724,7 @@ The history functionality is intended to support usability, traceability and eva
 > **Recommended screenshot:** Insert the application's scan-history page.
 >
 > **Figure X: Scan History Interface**
-> _Source: Screenshot from the implemented system (2026)._
+> *Source: Screenshot from the implemented system (2026).*
 
 ---
 
@@ -773,15 +773,15 @@ The error interface provides controlled feedback when a URL cannot be analysed s
 
 ### Recommended Interface Screenshots
 
-| Screenshot | Recommended Content              |
-| ---------- | -------------------------------- |
-| Figure X   | Home/URL submission page         |
-| Figure X   | Scan progress/status             |
-| Figure X   | Scam classification result       |
-| Figure X   | Legitimate classification result |
-| Figure X   | Explanation/indicators           |
-| Figure X   | Scan history                     |
-| Figure X   | Error/failure response           |
+| Screenshot | Recommended Content |
+|---|---|
+| Figure X | Home/URL submission page |
+| Figure X | Scan progress/status |
+| Figure X | Scam classification result |
+| Figure X | Legitimate classification result |
+| Figure X | Explanation/indicators |
+| Figure X | Scan history |
+| Figure X | Error/failure response |
 
 ---
 
@@ -789,22 +789,22 @@ The error interface provides controlled feedback when a URL cannot be analysed s
 
 The completed system combines web development, machine learning, browser automation, data processing and database technologies.
 
-| Technology     | Purpose                         |
-| -------------- | ------------------------------- |
-| Python 3.11    | Core application implementation |
-| FastAPI        | Backend/API services            |
-| SQLAlchemy     | Database ORM                    |
-| MySQL          | Persistent database             |
-| PyMySQL        | MySQL database connectivity     |
-| BeautifulSoup4 | HTML parsing                    |
-| Playwright     | Controlled browser automation   |
-| Chromium       | Browser execution environment   |
-| Pandas         | Data processing                 |
-| NumPy          | Numerical processing            |
-| Scikit-learn   | Machine-learning implementation |
-| Joblib         | Trained-model persistence       |
-| HTML/CSS       | Web interface                   |
-| JavaScript     | Client-side interaction         |
+| Technology | Purpose |
+|---|---|
+| Python 3.11 | Core application implementation |
+| FastAPI | Backend/API services |
+| SQLAlchemy | Database ORM |
+| MySQL | Persistent database |
+| PyMySQL | MySQL database connectivity |
+| BeautifulSoup4 | HTML parsing |
+| Playwright | Controlled browser automation |
+| Chromium | Browser execution environment |
+| Pandas | Data processing |
+| NumPy | Numerical processing |
+| Scikit-learn | Machine-learning implementation |
+| Joblib | Trained-model persistence |
+| HTML/CSS | Web interface |
+| JavaScript | Client-side interaction |
 
 ### Technology Architecture
 
@@ -870,26 +870,26 @@ scam_website_detector/
 
 ### Directory Description
 
-| Directory         | Purpose                                                              |
-| ----------------- | -------------------------------------------------------------------- |
-| `app/`            | Main application source code                                         |
-| `app/api/`        | API routes, dependencies and schemas                                 |
-| `app/collectors/` | HTTP, DNS, RDAP, TLS and browser collection                          |
-| `app/core/`       | Configuration, security, failure and performance utilities           |
-| `app/database/`   | Database connection, sessions and models                             |
-| `app/features/`   | URL, domain, HTML, TLS and behavioural feature extraction            |
-| `app/ml/`         | Machine-learning models, preprocessing, evaluation and hybrid fusion |
-| `app/schemas/`    | Application data schemas                                             |
-| `app/services/`   | Scan, prediction, explanation, failure and repository services       |
-| `app/static/`     | CSS and JavaScript resources                                         |
-| `app/templates/`  | HTML interface templates                                             |
-| `app/web/`        | Web routing                                                          |
-| `data/`           | Dataset, processing and evaluation artefacts                         |
-| `logs/`           | Application/system logs                                              |
-| `models/`         | Trained deployment models and configuration                          |
-| `reports/`        | Generated evaluation and visualisation outputs                       |
-| `tests/`          | Software and system tests                                            |
-| `training/`       | Dataset preparation, model training and evaluation scripts           |
+| Directory | Purpose |
+|---|---|
+| `app/` | Main application source code |
+| `app/api/` | API routes, dependencies and schemas |
+| `app/collectors/` | HTTP, DNS, RDAP, TLS and browser collection |
+| `app/core/` | Configuration, security, failure and performance utilities |
+| `app/database/` | Database connection, sessions and models |
+| `app/features/` | URL, domain, HTML, TLS and behavioural feature extraction |
+| `app/ml/` | Machine-learning models, preprocessing, evaluation and hybrid fusion |
+| `app/schemas/` | Application data schemas |
+| `app/services/` | Scan, prediction, explanation, failure and repository services |
+| `app/static/` | CSS and JavaScript resources |
+| `app/templates/` | HTML interface templates |
+| `app/web/` | Web routing |
+| `data/` | Dataset, processing and evaluation artefacts |
+| `logs/` | Application/system logs |
+| `models/` | Trained deployment models and configuration |
+| `reports/` | Generated evaluation and visualisation outputs |
+| `tests/` | Software and system tests |
+| `training/` | Dataset preparation, model training and evaluation scripts |
 
 > **Deployment note:** The `training/` directory contains research/training utilities. Normal users do not need to execute the training scripts to operate the completed application.
 
@@ -908,10 +908,10 @@ models/
 └── hybrid_fusion_config.json
 ```
 
-| File                        | Purpose                                  |
-| --------------------------- | ---------------------------------------- |
-| `rf_heuristic.joblib`       | Trained Random Forest heuristic model    |
-| `rf_behavioural.joblib`     | Trained Random Forest behavioural model  |
+| File | Purpose |
+|---|---|
+| `rf_heuristic.joblib` | Trained Random Forest heuristic model |
+| `rf_behavioural.joblib` | Trained Random Forest behavioural model |
 | `hybrid_fusion_config.json` | Configuration for hybrid evidence fusion |
 
 ### 21.2 Runtime Model Package
@@ -942,11 +942,11 @@ The final evaluation dataset contains website URLs used to assess the implemente
 
 ### 22.1 Dataset Composition
 
-| Category                  | Samples |
-| ------------------------- | ------: |
-| Legitimate Websites       |       9 |
-| Scam/Phishing Websites    |      40 |
-| **Total Evaluation URLs** |  **49** |
+| Category | Samples |
+|---|---:|
+| Legitimate Websites | 9 |
+| Scam/Phishing Websites | 40 |
+| **Total Evaluation URLs** | **49** |
 
 ### 22.2 Evaluation Purpose
 
@@ -967,7 +967,7 @@ Results should therefore be interpreted as findings from the defined experimenta
 > **Recommended figure:** Insert the final legitimate-versus-scam evaluation dataset bar chart.
 >
 > **Figure X: Distribution of Evaluation Website Categories**
-> _Source: Author's experimental dataset (2026)._
+> *Source: Author's experimental dataset (2026).*
 
 ---
 
@@ -1017,10 +1017,10 @@ F1 = 2 × (Precision × Recall) / (Precision + Recall)
 
 The confusion matrix records:
 
-|                       | Predicted Legitimate | Predicted Scam      |
-| --------------------- | -------------------- | ------------------- |
-| **Actual Legitimate** | True Negative (TN)   | False Positive (FP) |
-| **Actual Scam**       | False Negative (FN)  | True Positive (TP)  |
+| | Predicted Legitimate | Predicted Scam |
+|---|---|---|
+| **Actual Legitimate** | True Negative (TN) | False Positive (FP) |
+| **Actual Scam** | False Negative (FN) | True Positive (TP) |
 
 The confusion matrix provides a more detailed view of correct and incorrect classifications than accuracy alone.
 
@@ -1028,11 +1028,11 @@ The confusion matrix provides a more detailed view of correct and incorrect clas
 
 The three approaches are compared using the same evaluation framework:
 
-| Approach         | Accuracy                     | Precision                    | Recall                       | F1-Score                     |
-| ---------------- | ---------------------------- | ---------------------------- | ---------------------------- | ---------------------------- |
-| Heuristic Only   | See final evaluation results | See final evaluation results | See final evaluation results | See final evaluation results |
+| Approach | Accuracy | Precision | Recall | F1-Score |
+|---|---|---|---|---|
+| Heuristic Only | See final evaluation results | See final evaluation results | See final evaluation results | See final evaluation results |
 | Behavioural Only | See final evaluation results | See final evaluation results | See final evaluation results | See final evaluation results |
-| Hybrid           | See final evaluation results | See final evaluation results | See final evaluation results | See final evaluation results |
+| Hybrid | See final evaluation results | See final evaluation results | See final evaluation results | See final evaluation results |
 
 > **Important:** Replace the cells above with the final values from the frozen evaluation results before publishing the README. No performance values should be manually estimated or inferred.
 
@@ -1103,16 +1103,16 @@ Performance testing records operational timing associated with website analysis 
 
 ### Testing Summary
 
-| Test Area       | Purpose                                     |
-| --------------- | ------------------------------------------- |
-| Unit            | Verify individual components                |
-| Integration     | Verify component interaction                |
-| Functional      | Verify required system functions            |
-| Behavioural     | Verify runtime website observation          |
-| Database        | Verify persistence and retrieval            |
-| End-to-End      | Verify complete scan workflow               |
+| Test Area | Purpose |
+|---|---|
+| Unit | Verify individual components |
+| Integration | Verify component interaction |
+| Functional | Verify required system functions |
+| Behavioural | Verify runtime website observation |
+| Database | Verify persistence and retrieval |
+| End-to-End | Verify complete scan workflow |
 | User Acceptance | Verify usability and functional suitability |
-| Performance     | Assess operational response time            |
+| Performance | Assess operational response time |
 
 ---
 
@@ -1254,3 +1254,736 @@ RF-Behavioural ───┘
 ```
 
 The supplied repository contains the trained models and application components required for normal operation. Users do not need to retrain the machine-learning models to install or use the system.
+
+---
+
+# PART B — COMPLETE INSTALLATION GUIDE
+
+This section provides the complete procedure for installing and running the **Real-Time Scam Website Detection System** on a Windows computer.
+
+> **Important:** Complete the installation steps in the order presented below. First-time users do not need to type Python commands, because the provided `.bat` files perform the setup automatically.
+
+---
+
+## 28. Repository Structure
+
+After extracting the project, the main folder should have the following structure:
+
+```text
+scam_website_detector/
+│
+├── app/
+│   ├── api/
+│   ├── collectors/
+│   ├── core/
+│   ├── database/
+│   ├── features/
+│   ├── ml/
+│   ├── schemas/
+│   ├── services/
+│   ├── static/
+│   ├── templates/
+│   ├── web/
+│   └── main.py
+│
+├── data/
+│   ├── experiments/
+│   ├── interim/
+│   ├── processed/
+│   └── raw/
+│
+├── database/
+│   └── setup/
+│       └── scam_detection_db.sql
+│
+├── logs/
+├── models/
+│   ├── runtime/
+│   ├── hybrid_fusion_config.json
+│   ├── rf_behavioural.joblib
+│   └── rf_heuristic.joblib
+│
+├── reports/
+│   └── figures/
+│
+├── tests/
+├── training/
+│
+├── .env
+├── .env.example
+├── .gitignore
+├── create_tables.py
+├── ReadMe.md
+├── requirements.txt
+├── run.py
+├── run_application.bat
+├── run_setup_check.bat
+├── setup_check.py
+├── setup_windows.bat
+├── test_database_crud.py
+└── test_playwright.py
+```
+
+### Major Project Components
+
+| Component | Purpose |
+|---|---|
+| `app/main.py` | Entry point for the FastAPI application |
+| `app/api/` | API routes for submitting scans, retrieving scans and the health check |
+| `app/web/` | Web page routes for the home page, results and history |
+| `app/templates/` | HTML pages used by the web interface |
+| `app/collectors/` | HTTP, DNS, RDAP, TLS and browser collection |
+| `app/services/` | Scan, prediction, explanation and scan-storage services |
+| `database/setup/scam_detection_db.sql` | SQL file used to create the database tables |
+| `models/` | Trained Random Forest models and the hybrid fusion configuration |
+| `models/runtime/` | Versioned model packages (`v1.0.0` and `v1.1.0`) |
+| `data/` | Datasets and experiment outputs (not needed to run the application) |
+| `reports/` | Evaluation figures |
+| `tests/` | Automated tests |
+| `training/` | Research scripts for dataset preparation and model training (not needed to run the application) |
+| `requirements.txt` | Required Python packages and versions |
+| `.env` / `.env.example` | Local configuration, including the database connection |
+| `setup_windows.bat` | Creates the Python environment and installs all requirements |
+| `setup_check.py` | Checks that the installation is ready |
+| `run_setup_check.bat` | Runs the setup checker |
+| `run_application.bat` | Starts the application |
+
+> **Do not move individual files out of the project folder.** The application depends on the repository structure and relative file paths.
+
+---
+
+# INSTALLATION
+
+## 29. System Requirements
+
+Before installing the application, ensure that the computer meets the following requirements.
+
+### 29.1 Recommended Computer Requirements
+
+| Requirement | Recommended Specification |
+|---|---|
+| **Operating System** | Windows 10 or Windows 11 |
+| **Architecture** | 64-bit |
+| **RAM** | 8 GB or higher |
+| **Free Storage** | At least 5 GB |
+| **Browser** | Google Chrome or Microsoft Edge |
+| **Internet Connection** | Required for initial downloads and setup |
+
+### 29.2 Required Software
+
+The following software is required:
+
+- **Python 3.11.x**
+- **XAMPP**
+- **Google Chrome or Microsoft Edge** (for viewing the web interface)
+- **Git — Optional**
+
+> **Git is not required for normal installation.** The setup downloads the Chromium browser used for behavioural analysis automatically. Users who are unfamiliar with Git can use the project ZIP file.
+
+---
+
+## 30. Required Software Downloads
+
+### 30.1 Python 3.11
+
+The project is configured for **Python 3.11**.
+
+#### Tested Installer
+
+Use the tested installer from Google Drive. The current Python releases no longer offer the older 3.11.x installers, so the official download page may not provide the correct version.
+
+[Download Python 3.11 from Google Drive](https://drive.google.com/file/d/1lB49zA95Qf1-JJXaQXx--do_2xvKY8bw/view?usp=sharing)
+
+> **Important:** Install Python 3.11 rather than a newer major Python version. The project's packages and trained machine-learning models are compatible with Python 3.11.
+
+---
+
+### 30.2 XAMPP
+
+XAMPP provides the local **MySQL/MariaDB database server** and the **phpMyAdmin** interface used to create the database.
+
+#### Tested Installer
+
+**Google Drive:**
+[Download XAMPP from Google Drive](https://drive.google.com/file/d/1JyGA5deTslTsrOk71xLDTiuBiqC3DEpQ/view?usp=sharing)
+
+#### Official XAMPP Website
+
+[Download XAMPP](https://www.apachefriends.org/download.html)
+
+---
+
+## 31. Download the Project
+
+### 31.1 Option A — Use the Project ZIP File (Recommended)
+
+This is the recommended method for users who do not use Git.
+
+1. Locate the project file:
+
+```text
+scam_website_detector.zip
+```
+
+2. Right-click the ZIP file.
+3. Select **Extract All**.
+4. Extract the project to a simple location, for example your Desktop or:
+
+```text
+C:\scam_website_detector
+```
+
+The extracted folder should contain files such as:
+
+```text
+C:\scam_website_detector\
+    app\
+    database\
+    models\
+    setup_windows.bat
+    run_setup_check.bat
+    run_application.bat
+    setup_check.py
+    requirements.txt
+    .env
+    ...
+```
+
+> **Recommended:** Use a short path such as `C:\scam_website_detector`. Avoid placing the project inside several deeply nested folders.
+
+---
+
+### 31.2 Option B — Clone with Git
+
+Users who already have Git installed may clone the repository instead.
+
+```bash
+git clone <REPOSITORY-URL>
+cd scam_website_detector
+```
+
+> This option is not required for normal project installation.
+
+---
+
+## 32. Install Python 3.11
+
+### 32.1 Start the Installer
+
+Locate the downloaded Python 3.11 installer and double-click it.
+
+### 32.2 Enable Python PATH
+
+On the first installation screen:
+
+> **Tick the checkbox labelled `Add python.exe to PATH`.**
+
+This allows the project's automated setup files to locate Python.
+
+### 32.3 Install Python
+
+1. Select **Install Now**.
+2. Allow the installation to complete.
+3. Select **Close** when installation finishes.
+
+### 32.4 Python Verification
+
+Manual command-line verification is not required. The automated setup file checks for Python 3.11 and reports a clear message if it cannot find it.
+
+> If Python cannot be detected later, return to the [Troubleshooting](#40-troubleshooting) section.
+
+---
+
+## 33. Install XAMPP
+
+### 33.1 Run the Installer
+
+1. Locate the downloaded XAMPP installer.
+2. Double-click the installer.
+3. Allow Windows to run the installation.
+4. Complete the installation using the default installation directory where possible.
+
+The typical installation location is:
+
+```text
+C:\xampp
+```
+
+### 33.2 Open the XAMPP Control Panel
+
+After installation:
+
+1. Open **XAMPP Control Panel**.
+2. Locate **MySQL**.
+3. Click **Start**.
+
+MySQL should display a running status.
+
+### 33.3 Start Apache for phpMyAdmin
+
+Apache is needed only to open phpMyAdmin in the browser:
+
+1. Locate **Apache**.
+2. Click **Start**.
+
+The XAMPP Control Panel should now show:
+
+```text
+Apache    Running
+MySQL     Running
+```
+
+> **Important:** XAMPP does **not** run the scam detection application itself. MySQL provides the database, while Python runs the web application.
+
+---
+
+## 34. Database Setup
+
+The application requires the `scam_detection_db` database. The SQL file used to create its tables is located at:
+
+```text
+database\setup\scam_detection_db.sql
+```
+
+### 34.1 Start the Required XAMPP Services
+
+Open **XAMPP Control Panel** and start:
+
+```text
+Apache
+MySQL
+```
+
+Both services should be running before proceeding.
+
+---
+
+### 34.2 Open phpMyAdmin
+
+Open a web browser and navigate to:
+
+[http://localhost/phpmyadmin](http://localhost/phpmyadmin)
+
+The phpMyAdmin interface should appear.
+
+---
+
+### 34.3 Create the Database
+
+1. Click **New** on the left side of phpMyAdmin.
+2. Under **Database name**, enter:
+
+```text
+scam_detection_db
+```
+
+3. Click **Create**.
+
+The new database should appear in the left navigation panel.
+
+> **Note:** The name must be exactly `scam_detection_db`. The application's connection string points to this name.
+
+---
+
+### 34.4 Select the Database
+
+Click:
+
+```text
+scam_detection_db
+```
+
+from the left navigation panel.
+
+Ensure that `scam_detection_db` is selected before importing the SQL file.
+
+---
+
+### 34.5 Open the Import Tool
+
+From the top menu, click:
+
+```text
+Import
+```
+
+---
+
+### 34.6 Select the SQL File
+
+Click **Choose File**.
+
+Navigate to the extracted project folder and select:
+
+```text
+scam_website_detector
+└── database
+    └── setup
+        └── scam_detection_db.sql
+```
+
+---
+
+### 34.7 Import the Database
+
+Scroll to the bottom of the phpMyAdmin import page and click:
+
+```text
+Go
+```
+
+Wait until phpMyAdmin confirms that the import has completed successfully.
+
+---
+
+### 34.8 Verify the Database Tables
+
+After the import, select the `scam_detection_db` database again.
+
+The database should contain the following tables:
+
+```text
+analysis_results
+behavioural_observations
+heuristic_observations
+scans
+scan_events
+system_logs
+```
+
+### Database Verification Checklist
+
+Before proceeding, confirm:
+
+- [ ] `scam_detection_db` database exists
+- [ ] SQL import completed successfully
+- [ ] Database tables are visible
+- [ ] MySQL is running in XAMPP
+
+> If the database does not contain the expected tables, do not continue. Delete the tables (or recreate the database), select `scam_detection_db`, and import `scam_detection_db.sql` again.
+
+---
+
+## 35. Python Environment Setup
+
+The project includes an automated Windows setup file.
+
+### 35.1 Locate the Setup File
+
+Open the extracted project folder:
+
+```text
+C:\scam_website_detector
+```
+
+Locate:
+
+```text
+setup_windows.bat
+```
+
+### 35.2 Run the Automated Setup
+
+Double-click:
+
+```text
+setup_windows.bat
+```
+
+No Python commands need to be entered manually.
+
+### 35.3 What the Automated Setup Does
+
+The setup file prepares the local Python environment required by the application:
+
+```text
+Find Python 3.11
+       │
+       ▼
+Create the .venv Virtual Environment
+       │
+       ▼
+Install Packages from requirements.txt
+       │
+       ▼
+Install Playwright Chromium
+       │
+       ▼
+Run the Health Check (setup_check.py)
+```
+
+In particular, it:
+
+- finds Python 3.11 on the computer;
+- creates the project's `.venv` virtual environment;
+- replaces an existing `.venv` if it uses the wrong Python version;
+- installs the packages listed in `requirements.txt`;
+- installs the Chromium browser used for behavioural analysis;
+- runs the health check.
+
+### 35.4 Allow Installation to Finish
+
+Do not close the setup window while packages or Chromium are being installed.
+
+The first installation may take **15 minutes or more**, depending on the computer and internet connection, because the Python packages and the Chromium browser are large downloads.
+
+> The automated setup normally needs to be completed only once on a new computer.
+
+---
+
+## 36. Environment Configuration
+
+The application reads its database connection from a local environment file named `.env`.
+
+The repository provides:
+
+```text
+.env.example
+```
+
+The working application uses:
+
+```text
+.env
+```
+
+### 36.1 Standard XAMPP Configuration
+
+For a standard local XAMPP installation, the required line is:
+
+```env
+DATABASE_URL=mysql+pymysql://root:@localhost:3306/scam_detection_db
+```
+
+### 36.2 Configuration Meaning
+
+The connection string is read in this order: driver, username, password, server and port, then database name.
+
+| Part of the Value | Meaning | Standard Local Value |
+|---|---|---|
+| `mysql+pymysql://` | Database driver | Do not change |
+| `root` | Database username | `root` |
+| `:` (blank password) | Database password, between `root:` and `@` | Blank for a default XAMPP installation |
+| `localhost:3306` | MySQL server address and port | `localhost:3306` |
+| `scam_detection_db` | Application database name | `scam_detection_db` |
+
+> If you have set a password for the MySQL `root` user, type it between `root:` and `@`, for example `root:MyPassword@localhost:3306/scam_detection_db`.
+
+### 36.3 Checking `.env`
+
+The extracted project already contains `.env`. If it is missing:
+
+1. Locate:
+
+```text
+.env.example
+```
+
+2. Make a copy of the file.
+3. Rename the copy to:
+
+```text
+.env
+```
+
+4. Open `.env` in Notepad.
+5. Confirm that the `DATABASE_URL` line matches the standard configuration above.
+6. Save and close the file.
+
+> **Security Notice:** `.env` contains machine-specific configuration and must **not** be committed to a public GitHub repository or shared publicly. The repository should contain `.env.example`, while each installation maintains its own local `.env`.
+
+---
+
+## 37. Automatic Setup Check
+
+After completing the installation and database configuration, verify the complete system before starting the application.
+
+### 37.1 Before Running the Check
+
+Ensure that:
+
+- [ ] Python 3.11 is installed
+- [ ] XAMPP is installed
+- [ ] MySQL is running
+- [ ] `scam_detection_db` has been created and the SQL file has been imported
+- [ ] `setup_windows.bat` has completed
+- [ ] `.env` exists and contains the correct `DATABASE_URL`
+
+---
+
+### 37.2 Run the Setup Checker
+
+From the main project folder, locate:
+
+```text
+run_setup_check.bat
+```
+
+Double-click the file.
+
+> **No commands need to be typed.** The batch file automatically runs `setup_check.py` using the project's Python environment.
+
+---
+
+### 37.3 What the Setup Checker Verifies
+
+The setup checker examines the components required for the application to operate correctly.
+
+#### Python Environment
+
+- Python installation and version
+- Project virtual environment
+- Required Python packages
+
+#### Project Files
+
+- Critical application files
+- Trained model files (`rf_heuristic.joblib`, `rf_behavioural.joblib`, `hybrid_fusion_config.json`)
+
+#### Browser Engine
+
+- Chromium can be launched for behavioural analysis
+
+#### Database
+
+- MySQL connectivity
+- Required database tables: `scans`, `heuristic_observations`, `behavioural_observations` and `scan_events`
+
+---
+
+### 37.4 Successful Setup
+
+A correctly configured installation shows a `[PASS]` line for every check, followed by:
+
+```text
+SYSTEM CHECK COMPLETED
+```
+
+The window then displays:
+
+```text
+SETUP CHECK PASSED
+SYSTEM STATUS: READY
+The application is ready to run.
+```
+
+> **Important:** Read the `[PASS]` and `[FAIL]` lines, not only the final message. Do not start the application while any line shows `[FAIL]`.
+
+---
+
+### 37.5 Failed Setup Check
+
+If the checker displays:
+
+```text
+[FAIL]
+```
+
+read the accompanying message before closing the window.
+
+For example:
+
+```text
+[FAIL] Database connection failed
+```
+
+Check that:
+
+1. XAMPP is open.
+2. MySQL is running.
+3. The `scam_detection_db` database exists.
+4. `.env` contains the correct `DATABASE_URL`.
+
+After correcting the reported problem, double-click:
+
+```text
+run_setup_check.bat
+```
+
+again.
+
+---
+
+## 38. Starting the Application
+
+### 38.1 Start the Application
+
+Locate and double-click:
+
+```text
+run_application.bat
+```
+
+A black command window opens, activates the project's Python environment and starts the server.
+
+> **Do not close the black window while using the application.** Closing it stops the application.
+
+---
+
+### 38.2 Open the Web Interface
+
+Open Google Chrome or Microsoft Edge and go to:
+
+[http://127.0.0.1:8000](http://127.0.0.1:8000)
+
+The home page should appear, where you can enter a website address for analysis.
+
+Other useful addresses:
+
+| Address | Purpose |
+|---|---|
+| [http://127.0.0.1:8000/history](http://127.0.0.1:8000/history) | Previously analysed websites |
+| [http://127.0.0.1:8000/health](http://127.0.0.1:8000/health) | Health check (shows `healthy` when the service is running) |
+| [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) | Interactive API documentation |
+
+---
+
+### 38.3 Stop the Application
+
+To stop the application, click the black window and press `Ctrl + C`, then close the window.
+
+---
+
+## 39. Responsible Use Reminder
+
+- Analyse only websites that you are authorised to examine, or that are publicly available for research.
+- Do not enter passwords, payment details or other credentials into any website you analyse with this system.
+- A **SCAM** result is an analytical output, not legal proof of fraud. A **LEGITIMATE** result does not guarantee that a website is safe.
+
+---
+
+## 40. Troubleshooting
+
+| Problem | Solution |
+|---|---|
+| `Python 3.11 was not found` | Reinstall Python 3.11 and tick **Add python.exe to PATH**, then run `setup_windows.bat` again. |
+| `.venv` uses the wrong Python version | Run `setup_windows.bat`. It removes the incompatible `.venv` and creates a new one. |
+| `Database connection failed` | Confirm that MySQL is running in XAMPP, that `scam_detection_db` exists, and that `DATABASE_URL` in `.env` is correct. |
+| Required tables are missing | Select `scam_detection_db` in phpMyAdmin and import `database\setup\scam_detection_db.sql` again. |
+| `Chromium unavailable` | Run `setup_windows.bat` again. It installs the Chromium browser. |
+| Web page does not open | Confirm that the black window from `run_application.bat` is still running, then open [http://127.0.0.1:8000](http://127.0.0.1:8000). |
+| Port 8000 is already in use | Close the other application or the earlier black window that is using port 8000, then start `run_application.bat` again. |
+
+> If a problem is not listed here, copy the exact message from the black window or the setup checker and report it to the project developer.
+
+---
+
+## Installation Progress Checklist
+
+Use this checklist to confirm that Part B has been completed:
+
+- [ ] Project ZIP extracted to a simple folder such as `C:\scam_website_detector`
+- [ ] Python 3.11 installed
+- [ ] `Add python.exe to PATH` enabled during installation
+- [ ] XAMPP installed
+- [ ] Apache started (for phpMyAdmin)
+- [ ] MySQL started
+- [ ] `scam_detection_db` database created
+- [ ] `scam_detection_db.sql` imported successfully
+- [ ] Expected database tables confirmed
+- [ ] `setup_windows.bat` completed
+- [ ] `.env` contains the correct `DATABASE_URL`
+- [ ] `run_setup_check.bat` executed with no `[FAIL]` lines
+- [ ] `run_application.bat` started and the home page opens at `http://127.0.0.1:8000`
+
+**Part B installation is complete when the setup checker shows no `[FAIL]` lines and the home page opens at `http://127.0.0.1:8000`.**
